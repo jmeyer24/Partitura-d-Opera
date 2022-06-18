@@ -4,4 +4,11 @@ A visualization of the **Opera Network** dataset in the **Graph Drawing Contest*
 
 ---
 
-This project is in association with Univerity Tuebingen in the summer semester 2022 in the seminar **"Graphenzeichnen"**
+This project is in association with University Tuebingen in the summer semester 2022 in the seminar **"Graphenzeichnen"**
+
+## Visualization
+
+Visualization via the open-source library [vexflow](https://github.com/0xfe/vexflow):
+1. file under `bin/sheet.html`  
+1. upload `data/opera_data.csv` (shortcut `u`)
+1. draw the data (shortcut `d`)
