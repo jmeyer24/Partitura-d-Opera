@@ -12,3 +12,11 @@ Visualization via the open-source library [vexflow](https://github.com/0xfe/vexf
 1. file under `bin/sheet.html`  
 1. upload `data/opera_data.csv` (shortcut `u`)
 1. draw the data (shortcut `d`)
+
+## Contribution
+
+JS-code under `bin/sheet.js`
+
+## TODO
+
+- everything
