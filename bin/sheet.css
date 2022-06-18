@@ -1,0 +1,658 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  /* background: lightblue; */
+  /* background: white; */
+}
+
+table {
+  border-collapse: collapse;
+  border: 2px black solid;
+  font: 12px sans-serif;
+  margin: 5px;
+  background: snow;
+}
+
+tr:nth-child(1) {
+  background: lightgrey;
+}
+
+/* th { */
+/*   background: lightgrey; */
+/* } */
+
+td {
+  border: 1px black solid;
+  padding: 10px;
+  text-align: center;
+}
+
+#canvas-wrap {
+  position: relative;
+  background: lightblue;
+}
+
+/* #sheet { */
+/*   background: peachpuff; */
+/*   /1* background: white; *1/ */
+/* } */
+
+#output {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  z-index: -1;
+}
+
+input {
+  display: none;
+}
+
+#loadbutton {
+  cursor: pointer;
+  padding: 6px 12px;
+  appearance: auto;
+  writing-mode: horizontal-tb !important;
+  font-style: ;
+  font-variant-ligatures: ;
+  font-variant-caps: ;
+  font-variant-numeric: ;
+  font-variant-east-asian: ;
+  font-weight: ;
+  font-stretch: ;
+  font-size: ;
+  font-family: ;
+  text-rendering: auto;
+  color: buttontext;
+  letter-spacing: normal;
+  word-spacing: normal;
+  line-height: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+  background-color: snow;
+  margin: 0em;
+  border-width: 2px;
+  border-style: outset;
+  border-color: buttonborder;
+  border-image: initial;
+}
+
+#drawbutton {
+  cursor: pointer;
+  position: absolute;
+  padding: 7.5px 12px;
+  background-color: snow;
+}
+
+#wrapper {
+  background: lightblue;
+  margin: 0;
+  width: 90em;
+  padding: 1em;
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: right;
+}
+
+/* Music Score  */
+
+main {
+  margin-left: 2em;
+  max-width: 80%;
+  display: grid;
+  grid-template-rows: repeat(3, minmax(70px, 1fr));
+  grid-template-columns: repeat(6, 1fr);
+  /*   grid-auto-flow: row; */
+  margin-top: 5em;
+  row-gap: 4em;
+}
+
+section {
+  /*   display: flex; */
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  /*   grid-template-rows: 1 1fr; */
+  border: 2px solid black;
+  background: linear-gradient(
+    to bottom,
+    #fff,
+    #fff 24%,
+    #000 24%,
+    #000 26%,
+    #fff 26%,
+    #fff 49%,
+    #000 49%,
+    #000 51%,
+    #fff 51%,
+    #fff 74%,
+    #000 74%,
+    #000 76%,
+    #fff 76%
+  );
+  margin: 0px;
+  padding: 0px;
+  padding-left: 1em;
+
+  /*   justify-content: space-around; */
+}
+
+section:nth-of-type(6n + 1) {
+  padding-left: 0;
+}
+
+p {
+  /*   display: inline-block; */
+  position: relative;
+  font-family: "SymbolaRegular";
+  font-weight: normal;
+  font-style: normal;
+  margin: 0px;
+  margin-top: 0.35em;
+  padding: 0px;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  letter-spacing: 0em;
+}
+
+.whole {
+  font-size: 5em;
+  margin: 0;
+  padding: 0;
+  line-height: 0em;
+}
+
+.clef {
+  font-size: 5em;
+  line-height: 0.75em;
+  margin: 0px;
+  margin-left: 0.7em;
+  padding: 0px;
+}
+
+.half {
+  font-size: 6em;
+  line-height: 0;
+  margin-top: 62px;
+  padding: 0;
+}
+
+.quarter {
+  margin-bottom: -0.5em;
+  font-size: 4.25em;
+}
+
+.eighth {
+  margin-bottom: -0.45em;
+  margin-left: -0.3em;
+  font-size: 4em;
+}
+
+.flip {
+  transform: rotate(180deg);
+}
+
+/* .highflip{
+  transform: rotate(0deg);
+} */
+
+.flip.lowc {
+  bottom: 0;
+}
+
+#weirdEigth {
+  font-size: 6em;
+  line-height: 0;
+  bottom: 11px;
+}
+
+.halfRest {
+  background: black;
+  width: 1.2em;
+  height: 0.5em;
+  margin: 1.5em 2em 0em 1em;
+}
+
+/* Modifiers */
+
+.sharp {
+  font-size: 2em;
+  font-weight: 1000;
+  top: 0em;
+  transform: skew(-10deg);
+}
+
+.flat {
+  font-size: 2em;
+  font-weight: bold;
+  bottom: 0.1em;
+  left: 0.7em;
+  margin: 0em;
+  margin-right: -1em;
+  line-height: 0px;
+  letter-spacing: 0;
+}
+
+.natural {
+  font-size: 2em;
+  font-weight: bold;
+  bottom: 0.3em;
+  left: 0.2em;
+  margin: 0em;
+  margin-right: -1em;
+  line-height: 0px;
+  letter-spacing: 0;
+}
+
+.modified {
+  margin-left: 0;
+  margin-right: -0.4em;
+}
+
+.sharp.g {
+  top: -1.3em;
+  margin-left: -0.5em;
+}
+
+.accent {
+  position: absolute;
+  font-size: 1.5em;
+  font-weight: semi-bold;
+}
+
+#a1 {
+  top: 14.8em;
+  left: 5.5em;
+}
+
+#a2 {
+  top: 21.3em;
+  left: 23em;
+}
+
+/* Eighth note bars */
+
+#bar1 {
+  position: absolute;
+  background: black;
+  width: 6.8em;
+  height: 0.5em;
+  top: 27.6em;
+  left: 23.45em;
+  transform: skew(0deg, -10deg);
+}
+
+#bar2 {
+  position: absolute;
+  background: black;
+  width: 6.15em;
+  height: 0.5em;
+  top: 36.8em;
+  left: 53.5em;
+  transform: skew(0deg, -30deg);
+}
+
+#bar3a {
+  position: absolute;
+  background: black;
+  width: 2.1em;
+  height: 0.5em;
+  top: 35.7em;
+  left: 66.2em;
+  transform: skew(0deg, 30deg);
+}
+
+#bar3b {
+  position: absolute;
+  background: black;
+  width: 2.1em;
+  height: 0.5em;
+  top: 36.5em;
+  left: 73.55em;
+  transform: skew(0deg, 30deg);
+}
+
+#bar4 {
+  position: absolute;
+  background: black;
+  width: 6.15em;
+  height: 0.5em;
+  top: 31.6em;
+  left: 81.4em;
+  transform: skew(0deg, -28deg);
+}
+
+#bar5 {
+  position: absolute;
+  background: black;
+  width: 6.15em;
+  height: 0.5em;
+  top: 44.9em;
+  left: 23.45em;
+  transform: skew(0deg, -30deg);
+}
+
+#bar6a {
+  position: absolute;
+  background: black;
+  width: 2.1em;
+  height: 0.5em;
+  top: 43.9em;
+  left: 36.7em;
+  transform: skew(0deg, 30deg);
+}
+
+#bar6b {
+  position: absolute;
+  background: black;
+  width: 2.05em;
+  height: 0.5em;
+  top: 44.6em;
+  left: 44.1em;
+  transform: skew(0deg, 38deg);
+}
+
+#bar7 {
+  position: absolute;
+  background: black;
+  width: 7.4em;
+  height: 0.5em;
+  top: 44em;
+  left: 52.25em;
+  transform: skew(0deg, -10deg);
+}
+
+/* Lines to go over all of the notes */
+
+.tie {
+  position: absolute;
+  width: 250px;
+  height: 40px;
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  border: 5px solid black;
+  border-bottom: 0;
+  border-width: 5px 0px;
+
+  /*     top: 45px;
+    left: 8.5em; */
+}
+
+#t1 {
+  top: 12.5em;
+  left: 8.5em;
+  width: 12em;
+}
+
+#t2 {
+  top: 14em;
+  left: 34.5em;
+  width: 16em;
+}
+
+#t3 {
+  top: 13em;
+  left: 53em;
+  width: 28em;
+}
+
+#t4 {
+  top: 21em;
+  left: 34.5em;
+  width: 16em;
+}
+
+#t5 {
+  top: 22em;
+  left: 63.5em;
+  width: 16em;
+}
+
+#t6 {
+  top: 22em;
+  left: 82em;
+  width: 6.5em;
+}
+
+#t7 {
+  top: 31.5em;
+  left: 4.5em;
+  width: 3em;
+  height: 1.5em;
+}
+
+#t8 {
+  top: 30.5em;
+  left: 4.5em;
+  width: 16em;
+}
+
+#t9 {
+  top: 37.5em;
+  left: 64em;
+  width: 16em;
+}
+
+/* Lines for the notes */
+
+.mark {
+  border-bottom: 2px solid #000;
+  top: -0.18em; /* Tweak this and the other top in equal, but opposite values */
+  position: relative;
+}
+
+.offsetMark {
+  position: relative;
+  top: 0.2em; /* Tweak this and the other top in equal, but opposite values */
+}
+
+/* Whole notes are still problematic */
+
+.markWhole {
+  border-bottom: 2px solid #000;
+  top: -0.12em; /* Tweak this and the other top in equal, but opposite values */
+  position: relative;
+}
+
+.offsetMarkWhole {
+  position: relative;
+  top: 0.11em; /* Tweak this and the other top in equal, but opposite values */
+}
+
+/* Every Note as a class */
+
+.lowe {
+  /*   line-height: -3em; */
+  /*   text-decoration: line-through;  */
+  /*   This has become the default */
+}
+
+.lowf {
+  bottom: 0.1em;
+}
+
+.lowg {
+  bottom: 0.2em;
+}
+
+.lowa {
+  bottom: 0.35em;
+}
+
+.lowb {
+  bottom: 0.45em;
+}
+
+.lowc {
+  bottom: 0.6em;
+}
+
+/* high notes get flipped the other way  */
+
+.high {
+  transform: rotate(180deg);
+}
+
+.d {
+  bottom: 0.13em;
+}
+
+.e {
+  bottom: 0.25em;
+}
+
+.f {
+  bottom: 0.4em;
+}
+
+.g {
+  bottom: 0.5em;
+}
+
+.a {
+  bottom: 0.65em;
+}
+
+.b {
+  bottom: 0.75em;
+}
+
+.c {
+  bottom: 0.85em;
+}
+
+/* Whole Note Classes */
+
+.whole.lowe {
+  margin-top: 0.62em;
+}
+.whole.lowf {
+  margin-top: 0.64em;
+}
+.whole.lowg {
+  margin-top: 0.65em;
+}
+.whole.lowa {
+  margin-top: 0.69em;
+}
+.whole.lowb {
+  margin-top: 0.68em;
+}
+.whole.lowc {
+  margin-top: 0.72em;
+}
+
+.whole.d {
+  margin-top: 0.16em;
+}
+
+.whole.e {
+  margin-top: 0.16em;
+}
+
+.whole.f {
+  margin-top: 0.2em;
+}
+
+.whole.g {
+  margin-top: 0.2em;
+}
+
+.whole.a {
+  margin-top: 0.24em;
+}
+
+.whole.b {
+  margin-top: 0.25em;
+}
+
+.whole.c {
+  margin-top: 0.26em;
+}
+
+/* Half Note Classes */
+
+.half.lowe {
+  bottom: 0.15em;
+}
+
+.half.lowf {
+  bottom: 0.25em;
+}
+
+.half.lowg {
+  bottom: 0.33em;
+}
+
+.half.lowa {
+  bottom: 0.43em;
+}
+
+.half.lowb {
+  bottom: 0.52em;
+}
+
+.half.lowc {
+  bottom: 0.6em;
+}
+
+.half.high.d {
+  top: 0.05em;
+}
+
+.half.high.e {
+  bottom: 0.03em;
+}
+
+.half.high.f {
+  bottom: 0.12em;
+}
+
+.half.high.g {
+  bottom: 0.21em;
+}
+
+.half.high.a {
+  bottom: 0.3em;
+}
+
+.half.high.b {
+  bottom: 0.4em;
+}
+
+.half.high.c {
+  bottom: 0.47em;
+}
+
+.eighth.lowg {
+  top: -0.15em;
+}
+
+.eighth.d {
+  bottom: 0.67em;
+}
+
+.eighth.f {
+  bottom: 0.94em;
+}
+
+.eighth.high.c {
+  margin-top: 0.45em;
+}
