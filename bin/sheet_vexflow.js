@@ -5,12 +5,18 @@ const {
   Renderer,
   Stave,
   StaveNote,
+  GhostNote,
   Voice,
   Beam,
   Formatter,
   TextNote,
   StaveConnector,
   Modifier,
+  Factory,
+  Tuplet,
+  Fraction,
+  Annotation,
+  Font,
 } = Vex.Flow;
 
 // ========================================================================
@@ -20,6 +26,8 @@ const x = 130;
 const y = 0; // 20
 const staveDistance = 90; // 70
 const staveWidth = window.innerWidth - 1.25 * x;
+const textPosition = 3;
+const max_operas = 18;
 
 // ========================================================================
 // save input file data in these variables
@@ -119,9 +127,27 @@ function prepareData() {
     numYears:
       Math.max(...sets["performance_year"]) -
       Math.min(...sets["performance_year"]),
-    numOperasOfComposer: 3, // TODO
   };
   return dat;
+}
+
+// ========================================================================
+// Helper function to sort arrays by indices
+// ========================================================================
+function getSortIndices(input) {
+  toSort = [...input];
+  for (var i = 0; i < toSort.length; i++) {
+    toSort[i] = [toSort[i], i];
+  }
+  toSort.sort(function (left, right) {
+    return left[0] < right[0] ? -1 : 1;
+  });
+  let sortIndices = [];
+  for (var j = 0; j < toSort.length; j++) {
+    sortIndices.push(toSort[j][1]);
+    toSort[j] = toSort[j][0];
+  }
+  return sortIndices;
 }
 
 // ========================================================================
@@ -169,6 +195,28 @@ function drawPartiture(dat) {
     "e/5",
     "f/5",
   ];
+  // let librettistColorMap = d3
+  //   .scaleSequential()
+  //   .domain([0, 7])
+  //   .interpolator(d3.interpolateViridis);
+  // let librettistColorMap = d3
+  //   .scaleOrdinal()
+  //   .domain(librettistNoteMap)
+  //   .range([
+  //     "brown",
+  //     "blue",
+  //     "green",
+  //     "purple",
+  //     "slateblue",
+  //     "darkgreen",
+  //     "red",
+  //     "orange",
+  //   ]);
+  let librettistColorMap = d3
+    .scaleLinear()
+    .domain([0, 7])
+    .range(["red", "blue"]);
+
   context.clear();
 
   // TODO barwise
@@ -205,16 +253,28 @@ function drawPartiture(dat) {
         }
       });
 
-      // get librettist opera pairs
+      // get unique librettist opera pairs
       librettist_opera_pairs = [];
+      histogram = [];
       librettists.forEach(function (lib, idx) {
-        librettist_opera_pairs.push((lib, operas[idx]));
+        // new pair
+        pair = [lib, operas[idx]];
+        // if none of the current pairs matches the new pair
+        if (!librettist_opera_pairs.some((p) => p.equals(pair))) {
+          // add new pair
+          librettist_opera_pairs.push(pair);
+          histogram.push(1);
+        } else {
+          histogram[histogram.length - 1]++;
+        }
       });
-      // console.log(new Set(librettist_opera_pairs));
-      librettist_opera_pairs = [...new Set(librettist_opera_pairs)].sort();
-      // console.log(librettist_opera_pairs);
+      let descendingOrderPermutation = getSortIndices(histogram).reverse();
+      librettist_opera_pairs = descendingOrderPermutation.map(
+        (i) => librettist_opera_pairs[i]
+      );
+      histogram = descendingOrderPermutation.map((i) => histogram[i]);
 
-      // get unique and sort
+      // get unique librettists and operas in sorted fashion
       librettists = [...new Set(librettists)].sort();
       operas = [...new Set(operas)].sort();
 
@@ -267,71 +327,180 @@ function drawPartiture(dat) {
         .draw();
 
       // ==============================================================
+      // Helper function to draw annotations below note heads
+      // ==============================================================
+      const annotation = (text, hJustification, vJustification) =>
+        new Annotation(text)
+          .setFont(Font.SANS_SERIF, 10)
+          .setJustification(hJustification)
+          .setVerticalJustification(vJustification);
+
+      // ==============================================================
       // draw information as notes for each composer
       // ==============================================================
-      // Create the notes
-      const voicelines = 1;
-      const notes = [[]];
-      // represent each librettist as a note
-      // all notes as a chord
-      const keys = [librettists.map((i) => librettistNoteMap[i - 1]), ["c/4"]];
       // only notes for the respective librettist-opera-pair
-      // librettist_opera_pairs.forEach(function (lop) {
-      //   if (lop[0] == i + 1) {
-      //     librettists.push(show["librettistMap"]);
-      //     operas.push(show["operaMap"]);
-      //   }
-      // });
-      // const keys = [
-      //   librettist_opera_pairs.map((i) => librettistNoteMap[i - 1]),
-      //   ["c/4"],
-      // ];
-      const durations = [4, "qr"];
-      const fillStyles = ["black", "red"];
-      const strokeStyles = Array(2).fill("#000000");
+      // const keys = librettists.map((i) => librettistNoteMap[i - 1]);
 
-      // fill the notes
-      // j voicelines, with the specifics e.g. keys[j]
-      for (let j = 0; j < voicelines; j++) {
-        notes[j] = [];
-        // i notes per voiceline per bar
-        for (let i = 0; i < time; i++) {
-          notes[j].push(
-            new StaveNote({
-              keys: keys[j], // keys[j][i]
-              duration: durations[j],
-            }).setStyle({
-              fillStyle: fillStyles[j],
-              strokeStyle: strokeStyles[j],
+      // represent each librettist-opera-pair as a colored quarter note
+      const keys = librettist_opera_pairs.map(
+        (p) => librettistNoteMap[p[0] - 1]
+      );
+
+      const durations = 8;
+      const fillStyles = librettist_opera_pairs.map((p) =>
+        librettistColorMap(p[0] - 1)
+      );
+      const strokeStyles = "#000000";
+
+      // get all the notes
+      // number of notes per composer is all their operas
+      notes = [];
+      for (let i = 0; i < time; i++) {
+        notes.push(
+          new StaveNote({
+            keys: [keys[i]],
+            duration: durations,
+          })
+            .setStyle({
+              fillStyle: fillStyles[i],
+              strokeStyle: fillStyles[i],
             })
-          );
-        }
+            .addModifier(annotation(histogram[i], i + 1, textPosition), 0)
+        );
       }
-
-      // Create a voice in time/4 and add above notes
-      const voices = [];
-      for (let j = 0; j < voicelines; j++) {
-        voices.push(
-          new Voice({
-            num_beats: time,
-            beat_value: 4,
-          }).addTickables(notes[j])
+      for (let i = time; i < max_operas; i++) {
+        notes.push(
+          // or: new GhostNote({ duration: durations })
+          new StaveNote({
+            keys: ["b/4"],
+            duration: durations + "r",
+          }).setStyle({
+            fillStyle: "lightgrey",
+            strokeStyle: "lightgrey",
+          })
         );
       }
 
-      // Format and justify the notes to windowsize with some padding
-      new Formatter().joinVoices(voices).format(voices, w - 20);
-
-      // Render voices.
-      voices.forEach(function (v) {
-        v.draw(context, old_s);
+      // TODO sort and connect the librettists with beams
+      var beams = Beam.generateBeams(notes, { stem_direction: 1 });
+      // var beams = Beam.generateBeams(notes, {
+      //   groups: [new Fraction(time, 4)],
+      // });
+      Formatter.FormatAndDraw(context, stave, notes, false);
+      beams.forEach(function (beam) {
+        beam.setStyle({ fillStyle: fillStyles[0] }).setContext(context).draw();
       });
     }
   }
 }
 
+function beamed() {
+  const stave = new Stave(10, 50, 350) //{ x: 10, y: 10, width: 350 })
+    .addTimeSignature("3/8")
+    .setContext(context)
+    .draw();
+
+  const notes = [
+    { keys: ["b/4"], duration: "16" },
+    { keys: ["a/4"], duration: "16" },
+    // { keys: ["g/4"], duration: "16" },
+    { keys: ["a/4"], duration: "8" },
+    { keys: ["f/4"], duration: "8" },
+    { keys: ["a/4"], duration: "8" },
+    { keys: ["f/4"], duration: "8" },
+    { keys: ["a/4"], duration: "8" },
+    { keys: ["f/4"], duration: "8" },
+    { keys: ["g/4"], duration: "8" },
+  ];
+
+  var stave_notes = notes.map(function (note) {
+    return new StaveNote(note);
+  });
+  var beams = Beam.generateBeams(stave_notes, {
+    groups: [new Fraction(3, 8)],
+  });
+  tuplet1 = new Tuplet(stave_notes.slice(0, 4));
+  tuplet2 = new Tuplet(stave_notes.slice(4, 8));
+
+  group = stave_notes.slice(0, 3);
+  let beam1 = new Beam(group);
+  let beam2 = new Beam(stave_notes.slice(3, 10));
+
+  // 3/8 time
+  // const voice = new Voice({ time: { num_beats: 3, beat_value: 8 } })
+  //   .setStrict(true)
+  //   .addTickables(stave_notes);
+
+  // new Formatter().joinVoices([voice]).formatToStave([voice], stave);
+
+  Formatter.FormatAndDraw(context, stave, stave_notes);
+  // beam1.setContext(context).draw();
+  // beam2.setContext(context).draw();
+  tuplet1.setContext(context).draw();
+  tuplet2.setContext(context).draw();
+  // voice.draw(context, stave);
+  beams.forEach(function (beam) {
+    beam.setContext(context).draw();
+  });
+}
+
+function drawExample() {
+  let stave = new Stave(10, 50, 350)
+    .addTimeSignature("3/8")
+    .setContext(context)
+    .draw();
+  var notes = [
+    // Beam
+    { keys: ["b/4"], duration: "8", stem_direction: -1 },
+    { keys: ["b/4"], duration: "8", stem_direction: -1 },
+    { keys: ["b/4"], duration: "8", stem_direction: 1 },
+    { keys: ["b/4"], duration: "8", stem_direction: 1 },
+    { keys: ["d/6"], duration: "8", stem_direction: -1 },
+    { keys: ["c/6", "d/6"], duration: "8", stem_direction: -1 },
+    { keys: ["d/6", "e/6"], duration: "8", stem_direction: -1 },
+  ];
+
+  var stave_notes = notes.map(function (note) {
+    return new StaveNote(note);
+  });
+  stave_notes[0].setStemStyle({ strokeStyle: "green" });
+  stave_notes[1].setStemStyle({ strokeStyle: "orange" });
+  stave_notes[1].setKeyStyle(0, { fillStyle: "chartreuse" });
+  stave_notes[2].setStyle({ fillStyle: "tomato", strokeStyle: "tomato" });
+
+  stave_notes[0].setKeyStyle(0, { fillStyle: "purple" });
+  stave_notes[4].setLedgerLineStyle({ fillStyle: "red", strokeStyle: "red" });
+  stave_notes[6].setFlagStyle({ fillStyle: "orange", strokeStyle: "orante" });
+
+  //   var beam1 = new Beam([stave_notes[0], stave_notes[1]]);
+  //   var beam2 = new Beam([stave_notes[2], stave_notes[3]]);
+  //   var beam3 = new Beam(stave_notes.slice(4, 6));
+
+  //   beam1.setStyle({
+  //     fillStyle: "blue",
+  //     strokeStyle: "blue",
+  //   });
+
+  //   beam2.setStyle({
+  //     shadowBlur: 20,
+  //     shadowColor: "blue",
+  //   });
+
+  var beams = Beam.generateBeams(stave_notes, {
+    groups: [new Fraction(2, 4), new Fraction(1, 4)],
+  });
+
+  Formatter.FormatAndDraw(context, stave, stave_notes, false);
+  // beam1.setContext(context).draw();
+  // beam2.setContext(context).draw();
+  // beam3.setContext(context).draw();
+
+  beams.forEach(function (b) {
+    b.setContext(context).draw();
+  });
+}
+
 function drawCombined() {
-  // const context = contextBuilder(options.elementId, 550, 700);
   const stave1 = new Stave(150, 10, 300);
   const stave2 = new Stave(150, 100, 300);
   const stave3 = new Stave(150, 190, 300);
@@ -398,7 +567,9 @@ function main() {
   if (typeof dataset != "undefined" && dataset.length != 0) {
     data = prepareData(dataset);
     drawPartiture(data);
-    // drawCombined();
   }
   // drawPartiture(prepareData(loadData()));
 }
+beamed();
+// drawCombined();
+// drawExample();
