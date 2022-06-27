@@ -22,18 +22,37 @@ const {
 // ========================================================================
 // meta-variables
 // ========================================================================
-const x = 130;
-const y = 0; // 20
-const staveDistance = 90; // 70
-const staveWidth = window.innerWidth - 1.25 * x;
+const sheetWidth = 4000;
+const sheetHeight = 2000;
+const startX = 130;
+const startY = 0;
+const staveWidth = sheetWidth - 1.25 * startX;
+// TODO: compute this correctly
+const staveDistance = sheetHeight / (2.1 * 10);
+const firstBarWidth = 90;
 const textPosition = 3;
-const max_operas = 18;
+const max_operas = 50;
+const overall_timespan = 58; // all years
+const countryNoteMap = ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
+// TODO: get 7 good colors (ordinal or linear?)
+const operaColorMap = d3
+  .scaleOrdinal()
+  .domain([0, 6])
+  .range(["gold", "blue", "green", "darkgreen", "pink", "slateblue", "orange"]);
+// const operaColorMap = d3.scaleOrdinal().domain([0, 6]).range(d3.schemeSet1);
+// const operaColorMap = d3.scaleLinear().domain([0, 6]).range(["lime", "blue"]);
+// there are at max 4 librettists for one componist
+const librettistDurationMap = [4, 8, 16, 32];
 
 // ========================================================================
 // save input file data in these variables
 // ========================================================================
 let dataset = [];
 let data = [];
+let stave = null;
+// TODO: get a bass stave as well
+// TODO: search for stave2 and comment in all occurences
+// let stave2 = null;
 
 // ========================================================================
 // Create an SVG renderer and attach it to the DIV element named "output".
@@ -41,7 +60,7 @@ let data = [];
 const div = document.getElementById("output");
 let datjson = 0;
 const renderer = new Renderer(div, Renderer.Backends.SVG);
-renderer.resize(window.innerWidth, window.innerHeight);
+renderer.resize(sheetWidth, sheetHeight);
 
 // ========================================================================
 // Configure the rendering context.
@@ -63,13 +82,13 @@ drawbutton.addEventListener("click", main);
 loadbutton.addEventListener("click", loadData);
 document.onkeydown = function (e) {
   switch (e.keyCode) {
-    case 68:
+    case 68: // d
       drawbutton.click();
       break;
-    case 76:
+    case 76: // l
       loadbutton.click();
       break;
-    case 85:
+    case 85: // u
       inputcsv.click();
       break;
     default:
@@ -181,20 +200,83 @@ Array.prototype.equals = function (array) {
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", { enumerable: false });
 
+// ==============================================================
+// Helper function to draw annotations below note heads
+// ==============================================================
+const annotation = (text, hJustification, vJustification) =>
+  new Annotation(text)
+    .setFont(Font.SANS_SERIF, 10)
+    .setJustification(hJustification)
+    .setVerticalJustification(vJustification);
+
+// ==============================================================
+// Helper function to get the last name of the composer
+// ==============================================================
+function getLastName(composerName) {
+  return (composerName = composerName.slice(
+    0,
+    composerName.indexOf(",") < composerName.indexOf(" ")
+      ? composerName.indexOf(",")
+      : composerName.indexOf(" ")
+  ));
+}
+
+// ==============================================================
+// Helper function to get pairs from lists of composer info
+// ==============================================================
+function createPairs(list1, list2) {
+  pairs = [];
+  histogram = [];
+  list1.forEach(function (value, idx) {
+    // new pair
+    pair = [value, list2[idx]];
+    // if none of the current pairs matches the new pair
+    if (!pairs.some((p) => p.equals(pair))) {
+      // add new pair
+      pairs.push(pair);
+      histogram.push(1);
+    } else {
+      histogram[histogram.length - 1]++;
+    }
+  });
+  let descendingOrderPermutation = getSortIndices(histogram).reverse();
+  pairs = descendingOrderPermutation.map((i) => pairs[i]);
+  histogram = descendingOrderPermutation.map((i) => histogram[i]);
+
+  // get unique lists in sorted fashion
+  return [
+    pairs,
+    histogram,
+    [...new Set(list1)].sort(),
+    [...new Set(list2)].sort(),
+  ];
+}
+
+// ==============================================================
+// Helper function to get information list from shows
+// ==============================================================
+function getInformation(data, dataKey, unique) {
+  list = [];
+  if ((string = "")) {
+    return data;
+  } else {
+    data.forEach(function (singleData) {
+      list.push(singleData[dataKey]);
+    });
+  }
+
+  if (unique) {
+    list = [...new Set(list)].sort();
+  }
+
+  return list;
+}
+
 // ========================================================================
 // draw the partiture by some data
 // ========================================================================
 function drawPartiture(dat) {
-  let librettistNoteMap = [
-    "f/4",
-    "g/4",
-    "a/4",
-    "b/4",
-    "c/5",
-    "d/5",
-    "e/5",
-    "f/5",
-  ];
+  context.clear();
   // let librettistColorMap = d3
   //   .scaleSequential()
   //   .domain([0, 7])
@@ -212,341 +294,166 @@ function drawPartiture(dat) {
   //     "red",
   //     "orange",
   //   ]);
-  let librettistColorMap = d3
-    .scaleLinear()
-    .domain([0, 7])
-    .range(["red", "blue"]);
 
-  context.clear();
-
-  // TODO barwise
-  // let w = staveWidth / (dat["numComposers"] + 1);
-  let w = staveWidth;
-
-  // for (let p = 0; p < dat["numPlaces"]; p++) {
-  // TODO
-  // for (let p = 0; p < dat["numLibrettists"]; p++) {
-  for (let p = 0; p < 1; p++) {
-    // ==============================================================
-    // create a line for each place
-    // ==============================================================
-
-    // create the first stave
-    let stave = new Stave(x, y + p * staveDistance, w);
-    let old_s = stave;
-
-    // ==============================================================
-    // create a bar for each composer
-    // ==============================================================
-    for (let i = 0; i < dat["numComposers"]; i++) {
-      // get all shows of a composer
-      // get all librettist a composer worked with
-      // get all operas of a single composer
-      let shows = [];
-      let librettists = [];
-      let operas = [];
-      dataset.forEach(function (show) {
-        if (show["composerMap"] == i + 1) {
-          shows.push(show);
-          librettists.push(show["librettistMap"]);
-          operas.push(show["operaMap"]);
-        }
-      });
-
-      // get unique librettist opera pairs
-      librettist_opera_pairs = [];
-      histogram = [];
-      librettists.forEach(function (lib, idx) {
-        // new pair
-        pair = [lib, operas[idx]];
-        // if none of the current pairs matches the new pair
-        if (!librettist_opera_pairs.some((p) => p.equals(pair))) {
-          // add new pair
-          librettist_opera_pairs.push(pair);
-          histogram.push(1);
-        } else {
-          histogram[histogram.length - 1]++;
-        }
-      });
-      let descendingOrderPermutation = getSortIndices(histogram).reverse();
-      librettist_opera_pairs = descendingOrderPermutation.map(
-        (i) => librettist_opera_pairs[i]
-      );
-      histogram = descendingOrderPermutation.map((i) => histogram[i]);
-
-      // get unique librettists and operas in sorted fashion
-      librettists = [...new Set(librettists)].sort();
-      operas = [...new Set(operas)].sort();
-
-      // get composer last name
-      let lastName = shows[0]["composer"];
-      lastName = lastName.slice(
-        0,
-        lastName.indexOf(",") < lastName.indexOf(" ")
-          ? lastName.indexOf(",")
-          : lastName.indexOf(" ")
-      );
-
-      // get numOperasOfComposer
-      let time = operas.length;
-
-      // TODO make time a list of int for each composer?
-      // TODO barwise instead of linewise for the composers?
-
-      // draw staves
-      stave = new Stave(old_s.x, y + 2 * i * staveDistance, w);
-      let stave2 = new Stave(old_s.x, y + (2 * i + 1) * staveDistance, w);
-      stave
-        .addTimeSignature(`${time}/4`)
-        .addClef("treble")
-        .setContext(context)
-        .draw();
-      stave2
-        .addTimeSignature(`${time}/4`)
-        .addClef("bass")
-        .setContext(context)
-        .draw();
-      old_s = stave;
-
-      // draw connectors and names
-      const conn_double = new StaveConnector(stave, stave2);
-      const conn_single_left = new StaveConnector(stave, stave2);
-      const conn_single_right = new StaveConnector(stave, stave2);
-      conn_single_left
-        .setType(StaveConnector.type.SINGLE_LEFT)
-        .setContext(context)
-        .draw();
-      conn_single_right
-        .setType(StaveConnector.type.SINGLE_RIGHT)
-        .setContext(context)
-        .draw();
-      conn_double
-        .setType(StaveConnector.type.DOUBLE)
-        .setText(lastName, Modifier.Position.LEFT)
-        .setContext(context)
-        .draw();
-
-      // ==============================================================
-      // Helper function to draw annotations below note heads
-      // ==============================================================
-      const annotation = (text, hJustification, vJustification) =>
-        new Annotation(text)
-          .setFont(Font.SANS_SERIF, 10)
-          .setJustification(hJustification)
-          .setVerticalJustification(vJustification);
-
-      // ==============================================================
-      // draw information as notes for each composer
-      // ==============================================================
-      // only notes for the respective librettist-opera-pair
-      // const keys = librettists.map((i) => librettistNoteMap[i - 1]);
-
-      // represent each librettist-opera-pair as a colored quarter note
-      const keys = librettist_opera_pairs.map(
-        (p) => librettistNoteMap[p[0] - 1]
-      );
-
-      const durations = 8;
-      const fillStyles = librettist_opera_pairs.map((p) =>
-        librettistColorMap(p[0] - 1)
-      );
-      const strokeStyles = "#000000";
-
-      // get all the notes
-      // number of notes per composer is all their operas
-      notes = [];
-      for (let i = 0; i < time; i++) {
-        notes.push(
-          new StaveNote({
-            keys: [keys[i]],
-            duration: durations,
-          })
-            .setStyle({
-              fillStyle: fillStyles[i],
-              strokeStyle: fillStyles[i],
-            })
-            .addModifier(annotation(histogram[i], i + 1, textPosition), 0)
-        );
-      }
-      for (let i = time; i < max_operas; i++) {
-        notes.push(
-          // or: new GhostNote({ duration: durations })
-          new StaveNote({
-            keys: ["b/4"],
-            duration: durations + "r",
-          }).setStyle({
-            fillStyle: "lightgrey",
-            strokeStyle: "lightgrey",
-          })
-        );
-      }
-
-      // TODO sort and connect the librettists with beams
-      var beams = Beam.generateBeams(notes, { stem_direction: 1 });
-      // var beams = Beam.generateBeams(notes, {
-      //   groups: [new Fraction(time, 4)],
-      // });
-      Formatter.FormatAndDraw(context, stave, notes, false);
-      beams.forEach(function (beam) {
-        beam.setStyle({ fillStyle: fillStyles[0] }).setContext(context).draw();
-      });
-    }
+  // ==============================================================
+  // create a stave for each composer
+  // ==============================================================
+  for (let c = 0; c < dat["numComposers"]; c++) {
+    drawComposer(c);
   }
 }
 
-function beamed() {
-  const stave = new Stave(10, 50, 350) //{ x: 10, y: 10, width: 350 })
-    .addTimeSignature("3/8")
+function drawComposer(c) {
+  // get all the years the composer performed in
+  // get all librettist a composer worked with
+  // get all operas of a single composer
+  let composerName = "";
+  let shows = [];
+  let years = [];
+  let librettists = [];
+  let operas = [];
+  dataset.forEach(function (show) {
+    if (show["composerMap"] == c + 1) {
+      composerName = show["composer"];
+      shows.push(show);
+      years.push(show["performance_year"]);
+      librettists.push(show["librettistMap"]);
+      operas.push(show["operaMap"]);
+    }
+  });
+  years = [...new Set(years)].map(Number).sort();
+  let time = Math.max(...years) - Math.min(...years) + 1;
+
+  // draw the first bars of the stave
+  stave = new Stave(startX, startY + c * staveDistance, firstBarWidth);
+  // stave = new Stave(startX, startY + 2 * c * staveDistance, firstBarWidth);
+  // stave2 = new Stave(
+  //   startX,
+  //   startY + (2 * c + 1) * staveDistance,
+  //   firstBarWidth
+  // );
+  startXAfterFirst = startX + firstBarWidth;
+  stave
+    .addTimeSignature(`${time}/4`)
+    .addClef("treble")
+    .setContext(context)
+    .draw();
+  // stave2
+  //   .addTimeSignature(`${time}/4`)
+  //   .addClef("bass")
+  //   .setContext(context)
+  //   .draw();
+
+  // // draw left-side connectors and name
+  // const conn_single_left = new StaveConnector(stave, stave2);
+  const conn_double = new StaveConnector(stave, stave);
+  // const conn_double = new StaveConnector(stave, stave2);
+  // conn_single_left
+  //   .setType(StaveConnector.type.SINGLE_LEFT)
+  //   .setContext(context)
+  //   .draw();
+  conn_double
+    .setType(StaveConnector.type.DOUBLE)
+    .setText(getLastName(composerName), Modifier.Position.LEFT)
     .setContext(context)
     .draw();
 
-  const notes = [
-    { keys: ["b/4"], duration: "16" },
-    { keys: ["a/4"], duration: "16" },
-    // { keys: ["g/4"], duration: "16" },
-    { keys: ["a/4"], duration: "8" },
-    { keys: ["f/4"], duration: "8" },
-    { keys: ["a/4"], duration: "8" },
-    { keys: ["f/4"], duration: "8" },
-    { keys: ["a/4"], duration: "8" },
-    { keys: ["f/4"], duration: "8" },
-    { keys: ["g/4"], duration: "8" },
-  ];
+  // ==============================================================
+  // create a bar for each year
+  // ==============================================================
+  for (let y = 0; y < time; y++) {
+    drawYear(c, y, years, time, shows, librettists, operas);
+  }
 
-  var stave_notes = notes.map(function (note) {
-    return new StaveNote(note);
-  });
-  var beams = Beam.generateBeams(stave_notes, {
-    groups: [new Fraction(3, 8)],
-  });
-  tuplet1 = new Tuplet(stave_notes.slice(0, 4));
-  tuplet2 = new Tuplet(stave_notes.slice(4, 8));
-
-  group = stave_notes.slice(0, 3);
-  let beam1 = new Beam(group);
-  let beam2 = new Beam(stave_notes.slice(3, 10));
-
-  // 3/8 time
-  // const voice = new Voice({ time: { num_beats: 3, beat_value: 8 } })
-  //   .setStrict(true)
-  //   .addTickables(stave_notes);
-
-  // new Formatter().joinVoices([voice]).formatToStave([voice], stave);
-
-  Formatter.FormatAndDraw(context, stave, stave_notes);
-  // beam1.setContext(context).draw();
-  // beam2.setContext(context).draw();
-  tuplet1.setContext(context).draw();
-  tuplet2.setContext(context).draw();
-  // voice.draw(context, stave);
-  beams.forEach(function (beam) {
-    beam.setContext(context).draw();
-  });
+  // // draw the right-side connector
+  // const conn_single_right = new StaveConnector(stave, stave2);
+  // conn_single_right
+  //   .setType(StaveConnector.type.SINGLE_RIGHT)
+  //   .setContext(context)
+  //   .draw();
 }
 
-function drawExample() {
-  let stave = new Stave(10, 50, 350)
-    .addTimeSignature("3/8")
-    .setContext(context)
-    .draw();
-  var notes = [
-    // Beam
-    { keys: ["b/4"], duration: "8", stem_direction: -1 },
-    { keys: ["b/4"], duration: "8", stem_direction: -1 },
-    { keys: ["b/4"], duration: "8", stem_direction: 1 },
-    { keys: ["b/4"], duration: "8", stem_direction: 1 },
-    { keys: ["d/6"], duration: "8", stem_direction: -1 },
-    { keys: ["c/6", "d/6"], duration: "8", stem_direction: -1 },
-    { keys: ["d/6", "e/6"], duration: "8", stem_direction: -1 },
-  ];
+function drawYear(c, y, years, time, shows, librettists, operas) {
+  // draw the bar of the current year
+  let barX =
+    startXAfterFirst + (y * (staveWidth - firstBarWidth)) / overall_timespan;
+  let barY = startY + c * staveDistance;
+  // let barY = startY + 2 * c * staveDistance;
+  let barWidth = (staveWidth - firstBarWidth) / overall_timespan;
+  stave = new Stave(barX, barY, barWidth);
+  // stave2 = new Stave(barX, barY + staveDistance, barWidth);
+  stave.setContext(context).draw();
+  // stave2.setContext(context).draw();
 
-  var stave_notes = notes.map(function (note) {
-    return new StaveNote(note);
-  });
-  stave_notes[0].setStemStyle({ strokeStyle: "green" });
-  stave_notes[1].setStemStyle({ strokeStyle: "orange" });
-  stave_notes[1].setKeyStyle(0, { fillStyle: "chartreuse" });
-  stave_notes[2].setStyle({ fillStyle: "tomato", strokeStyle: "tomato" });
+  // get all shows in that year
+  let fullYearList = Array.from(new Array(time), (x, i) => i + years[0]);
+  let showsInYear = shows
+    .map((show) => {
+      if (parseInt(show["performance_year"]) == fullYearList[y]) {
+        return show;
+      }
+    })
+    .filter((show) => show !== undefined);
 
-  stave_notes[0].setKeyStyle(0, { fillStyle: "purple" });
-  stave_notes[4].setLedgerLineStyle({ fillStyle: "red", strokeStyle: "red" });
-  stave_notes[6].setFlagStyle({ fillStyle: "orange", strokeStyle: "orante" });
+  // only draw notes, when there are notes to draw... error else
+  if (showsInYear.length > 0) {
+    // ==============================================================
+    // draw information as notes for each composer
+    // ==============================================================
+    // represent each show as a colored note
+    // note by country/place TODO: which one
+    // note length by librettist
+    // color by opera
+    countries = getInformation(shows, "country", true);
+    librettists = getInformation(shows, "librettist", true);
+    operas = getInformation(shows, "title", true);
+    // [pairs, histogram,,] = createPairs(countries, librettists);
 
-  //   var beam1 = new Beam([stave_notes[0], stave_notes[1]]);
-  //   var beam2 = new Beam([stave_notes[2], stave_notes[3]]);
-  //   var beam3 = new Beam(stave_notes.slice(4, 6));
+    // note specifics
+    const keys = showsInYear.map(
+      (show) =>
+        countryNoteMap[
+          countries.findIndex((element) => element === show["country"])
+        ]
+    );
+    const durations = showsInYear.map(
+      (show) =>
+        librettistDurationMap[
+          librettists.findIndex((element) => element === show["librettist"])
+        ]
+    );
+    const fillStyles = showsInYear.map((show) =>
+      operaColorMap(operas.findIndex((element) => element === show["title"]))
+    );
+    const strokeStyles = "#000000";
 
-  //   beam1.setStyle({
-  //     fillStyle: "blue",
-  //     strokeStyle: "blue",
-  //   });
+    // get all the notes
+    // number of notes per composer is all their operas
+    notes = [];
+    for (let s = 0; s < showsInYear.length; s++) {
+      notes.push(
+        new StaveNote({
+          keys: [keys[s]],
+          duration: durations,
+        }).setStyle({
+          fillStyle: fillStyles[s],
+          strokeStyle: fillStyles[s],
+        })
+        // TODO: add first and last year as bar numbers
+        // .addModifier(annotation(histogram[s], s + 1, textPosition), 0)
+      );
+    }
 
-  //   beam2.setStyle({
-  //     shadowBlur: 20,
-  //     shadowColor: "blue",
-  //   });
-
-  var beams = Beam.generateBeams(stave_notes, {
-    groups: [new Fraction(2, 4), new Fraction(1, 4)],
-  });
-
-  Formatter.FormatAndDraw(context, stave, stave_notes, false);
-  // beam1.setContext(context).draw();
-  // beam2.setContext(context).draw();
-  // beam3.setContext(context).draw();
-
-  beams.forEach(function (b) {
-    b.setContext(context).draw();
-  });
-}
-
-function drawCombined() {
-  const stave1 = new Stave(150, 10, 300);
-  const stave2 = new Stave(150, 100, 300);
-  const stave3 = new Stave(150, 190, 300);
-  const stave4 = new Stave(150, 280, 300);
-  const stave5 = new Stave(150, 370, 300);
-  const stave6 = new Stave(150, 460, 300);
-  const stave7 = new Stave(150, 560, 300);
-  stave1.setText("Violin", Modifier.Position.LEFT);
-  stave1.setContext(context);
-  stave2.setContext(context);
-  stave3.setContext(context);
-  stave4.setContext(context);
-  stave5.setContext(context);
-  stave6.setContext(context);
-  stave7.setContext(context);
-  const conn_single = new StaveConnector(stave1, stave7);
-  const conn_double = new StaveConnector(stave2, stave3);
-  const conn_bracket = new StaveConnector(stave4, stave7);
-  const conn_none = new StaveConnector(stave4, stave5);
-  const conn_brace = new StaveConnector(stave6, stave7);
-  conn_single.setType(StaveConnector.type.SINGLE);
-  conn_double.setType(StaveConnector.type.DOUBLE);
-  conn_bracket.setType(StaveConnector.type.BRACKET);
-  conn_brace.setType(StaveConnector.type.BRACE);
-  conn_brace.setXShift(-5);
-  conn_double.setText("Piano");
-  conn_none.setText("Multiple", { shift_y: -15 });
-  conn_none.setText("Line Text", { shift_y: 15 });
-  conn_brace.setText("Harpsichord");
-  conn_single.setContext(context);
-  conn_double.setContext(context);
-  conn_bracket.setContext(context);
-  conn_none.setContext(context);
-  conn_brace.setContext(context);
-  stave1.draw();
-  stave2.draw();
-  stave3.draw();
-  stave4.draw();
-  stave5.draw();
-  stave6.draw();
-  stave7.draw();
-  conn_single.draw();
-  conn_double.draw();
-  conn_bracket.draw();
-  conn_none.draw();
-  conn_brace.draw();
+    // TODO sort and connect the librettists with beams
+    var beams = Beam.generateBeams(notes, { stem_direction: 1 });
+    // var beams = Beam.generateBeams(notes, {
+    //   groups: [new Fraction(time, 4)],
+    // });
+    Formatter.FormatAndDraw(context, stave, notes, false);
+    beams.forEach(function (beam) {
+      beam.setStyle({ fillStyle: fillStyles[0] }).setContext(context).draw();
+    });
+  }
 }
 
 function main() {
@@ -570,6 +477,5 @@ function main() {
   }
   // drawPartiture(prepareData(loadData()));
 }
-beamed();
-// drawCombined();
-// drawExample();
+
+// window.addEventListener("resize", main);

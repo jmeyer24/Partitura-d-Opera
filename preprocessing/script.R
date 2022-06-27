@@ -1,18 +1,19 @@
 # setup ====================================================================
 
 #setwd("D:/Documents/Studium/MSc Medieninformatik/10_Sommersemester_2022/GZ - Graphenzeichnen")
-setwd("D:/Documents/Studium/MSc Medieninformatik/10_Sommersemester_2022/GZ - Graphenzeichnen/partitura d'opera/preprocessing")
+setwd("D:/Documents/Studium/MSc Medieninformatik/10_Sommersemester_2022/GZ - Graphenzeichnen/partitura d'opera")
 
 library(tidyverse)
+library(plyr)
 library(gridExtra)
-#library(ggplot2)
-#library(ggsci)
-#library(sf)
-#library(mapview)
-#library(ggmap)
+library(ggplot2)
+library(ggsci)
+library(sf)
+library(mapview)
+library(ggmap)
 
 # read the data and rename (as not found by geocoding)
-opera_data <- read.csv(file = 'opera_performances_200_contest.csv')
+opera_data <- read.csv(file = 'preprocessing/opera_performances_200_contest.csv')
 opera_data$rism_id <- NULL
 opera_data[opera_data$placename == "Carskoe Selo","placename"] <- "Puschkin"
 
@@ -45,7 +46,7 @@ write.csv(opera_data %>%
   summarise(n_shows=n(), 
             n_distinct_operas=n_distinct(title)) %>%
   arrange(desc(n_shows)),
-"05 - project/per_composer_info.csv", row.names=FALSE)
+"data/per_composer_info.csv", row.names=FALSE)
 
 # per opera info
 write.csv(opera_data %>%
@@ -54,7 +55,7 @@ write.csv(opera_data %>%
             n_distinct_places=n_distinct(placename),
             n_distinct_librettist=n_distinct(librettist)) %>%
   arrange(desc(n_shows)),
-  "05 - project/per_opera_info.csv", row.names=FALSE)
+  "data/per_opera_info.csv", row.names=FALSE)
 
 # per librettist info
 write.csv(opera_data %>% 
@@ -64,7 +65,7 @@ write.csv(opera_data %>%
             n_distinct_operas=n_distinct(composer,title), 
             n_distinct_title=n_distinct(title)) %>%
   arrange(desc(n_shows)),
-"05 - project/per_librettist_info.csv", row.names=FALSE, quote=FALSE)
+"data/per_librettist_info.csv", row.names=FALSE, quote=FALSE)
 
 # per place info
 write.csv(opera_data %>%
@@ -72,7 +73,7 @@ write.csv(opera_data %>%
   summarise(n_shows=n(), 
             n_distinct_composers=n_distinct(composer)) %>%
   arrange(desc(n_shows)),
-"05 - project/per_place_info.csv", row.names=FALSE, quote=FALSE)
+"data/per_place_info.csv", row.names=FALSE, quote=FALSE)
 
 # per title info
 write.csv(opera_data %>% 
@@ -82,7 +83,7 @@ write.csv(opera_data %>%
             n_distinct_places=n_distinct(placename),
             n_distinct_librettist=n_distinct(librettist)) %>%
   arrange(desc(n_distinct_librettist)),
-"05 - project/per_title_info.csv", row.names=FALSE, quote=FALSE)
+"data/per_title_info.csv", row.names=FALSE, quote=FALSE)
 
 # number of shows per (place - opera)
 opera_data %>% 
@@ -215,7 +216,7 @@ cy <- pairs(composer, performance_year)
 places <- distinct(opera_data, placename)
 places <- places[places!=""] # remove empty rows
 places <- data.frame(places)
-places <- rename(places, city = places)
+places <- rename(places,city=places)
 
 # extend dataframe for geocoding
 column_names <- c("housenumber", "street", "postcode", "city", "state")
@@ -240,22 +241,25 @@ places <- places[column_names]
 places$country <- c("Russland", "Italien", "Deutschland", "Deutschland", 
                "Italien", "Italien", "Italien", "Italien", 
                "Italien", "Deutschland", "Deutschland", "Frankreich", 
-               "Deutschland", "?sterreich", "Italien", "Polen",
+               "Deutschland", "Oesterreich", "Italien", "Polen",
                "Deutschland", "Deutschland", "Deutschalnd", "Tschechien", 
                "Niederlande", "Italien", "Malta", "Italien",
                "Italien", "Deutschland", "Deutschland", "Deutschland",
-               "Deutschland", "Russland", "Italien", "?sterreich", 
-               "Italien", "?sterreich", "Deutschland", "Italien",
+               "Deutschland", "Russland", "Italien", "Oesterreich", 
+               "Italien", "Oesterreich", "Deutschland", "Italien",
                "Deutschland", "Deutschland", "Deutschland", "England",
                "Italien", "Deutschland", "Italien")
 
-write.csv(places, "places_to_geocode.csv", row.names=FALSE, quote=FALSE)
+write.csv(places, "preprocessing/places_to_geocode.csv", row.names=FALSE, quote=FALSE)
+
+placesMap <- places[c("city", "country")]
+opera_data$country <- mapvalues(opera_data$placename, from=placesMap$city, to=placesMap$country)
 
 # geocoding: data postprocessing ==============================================
 
-geo_data <- read.csv("places_geocoded_full.csv")
+geo_data <- read.csv("preprocessing/places_geocoded_full.csv")
 geo_data <- geo_data[c("original_city","lon","lat")]
-write.csv(geo_data, "places_geocoded.csv", row.names=FALSE, quote=FALSE)
+write.csv(geo_data, "preprocessing/places_geocoded.csv", row.names=FALSE, quote=FALSE)
 
 # geocoding: visualization ================================================
 
@@ -263,5 +267,5 @@ write.csv(geo_data, "places_geocoded.csv", row.names=FALSE, quote=FALSE)
 #mapview(geo_data, zcol="original_city")
 
 # write dataframe
-write.csv(opera_data,"../data/opera_data.csv", row.names = FALSE)
+write.csv(opera_data,"data/opera_data.csv", row.names = FALSE)
 

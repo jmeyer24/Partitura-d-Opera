@@ -17,6 +17,19 @@ Visualization via the open-source library [vexflow](https://github.com/0xfe/vexf
 
 JS-code under `bin/sheet.js`
 
+## Links
+
+Some links to relevant parts of the `vexflow` documentation
+- [Tests](http://vexflow.com/tests/?StaveConnector%20module%3A%20StaveConnector%20Combined%20Draw%20Test%20(Canvas))
+- [Tests Github](https://github.com/0xfe/vexflow/tree/master/tests)
+- [EasyScore](https://github.com/0xfe/vexflow/wiki/Using-EasyScore)
+- [Github](https://github.com/0xfe/vexflow)
+
+Other maybe relevant documentations
+- [d3.js Colors](https://d3-graph-gallery.com/graph/custom_color.html)
+- [CSS opacity gradient](https://stackoverflow.com/questions/15597167/css3-opacity-gradient)
+- [git branching](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
+
 ## TODO
 
 **Legende**, um den Graphen richtig zu lesen  
