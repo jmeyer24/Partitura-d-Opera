@@ -19,4 +19,32 @@ JS-code under `bin/sheet.js`
 
 ## TODO
 
-- everything
+**Legende**, um den Graphen richtig zu lesen  
+Mit allen folgenden Infos:
+- Infos über Librettist wie Tod des Librettisten? In Legende!  
+- **Notenhöhe/-linien** für Orte (braucht es Bass-Linie?)
+- **Notenlänge** als Librettist (Farbe, wenn Notenlänge nicht hinhaut)  
+	Librettist mit meisten Noten hat kürzeste Notenwert  
+	In einem Takt: Librettist mit längestem Notenwert zuerst, dann zweitlängster usw, sodass alle Notenenden auf das Taktende fallen
+- **x-Achse/Takte**  
+	-> Noten sortiert nach Jahreszahlen  
+	-> Notenzeile als Zeitachse (1 Takt für 1 Jahr)
+	-> links/rechts unten erste/letzte Jahreszahl eines Komponisten
+- (**Farbe** für Oper)
+- Falls vorhanden: wenn Komponist gestorben, bevor letzte Oper aufgeführt, dann ein Symbol
+- **Triolenbalken** für ???
+
+### Ästhetik
+
+- verschieden lange Notenzeilen sortieren nach Startjahr des Komponisten (bei zwei gleichen dann Endjahr/Zeilenlänge)
+- Hintergrund als altes Notenpapier
+- Bilder von den Komponisten (Geburts-/Sterbedatum)
+- rechts der Notenlinie welches Land/Ort als Flagge (+ Ortsname) und die Flaggen reinverwischen (Filter-Effekt)
+- Seite scrollbar machen
+
+#### Optional
+- Vexflow handgeschriebener Stil
+
+#### Vorschläge für Prototypen
+- Keine Akkorde, einzelne Noten
+- Kurve unter Noten (Haltebogen für ab Viertelnoten)/Notenbalken (ab Achtelnoten) um Wiederholungen hervorzuheben
