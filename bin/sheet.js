@@ -47,8 +47,11 @@ const librettistDurationMap = [4, 8, 16, 32];
 // ========================================================================
 // save input file data in these variables
 // ========================================================================
-let dataset = [];
-let data = [];
+// let dataset = [];
+// TODO: we got the variable "dataset" from the sheet.php
+// console.log("this is dataset (.js): ", dataset);
+dataset = JSON.parse(dataset);
+// let data = [];
 let stave = null;
 // TODO: get a bass stave as well
 // TODO: search for stave2 and comment in all occurences
@@ -66,58 +69,6 @@ renderer.resize(sheetWidth, sheetHeight);
 // Configure the rendering context.
 // ========================================================================
 const context = renderer.getContext();
-
-// ========================================================================
-// Get DOM elements
-// ========================================================================
-const drawbutton = document.getElementById("drawbutton");
-const loadbutton = document.getElementById("loadbutton");
-const inputcsv = document.getElementById("inputcsv");
-let loaded = false;
-
-// ========================================================================
-// add event listeners for the upload and draw buttons
-// ========================================================================
-drawbutton.addEventListener("click", main);
-loadbutton.addEventListener("click", loadData);
-document.onkeydown = function (e) {
-  switch (e.keyCode) {
-    case 68: // d
-      drawbutton.click();
-      break;
-    case 76: // l
-      loadbutton.click();
-      break;
-    case 85: // u
-      inputcsv.click();
-      break;
-    default:
-      break;
-  }
-};
-
-// ========================================================================
-// read the uploaded data file and save its content in the variable dataset
-// ========================================================================
-function loadData() {
-  if (typeof inputcsv.files[0] == "undefined") {
-    alert("No file uploaded yet!");
-  } else {
-    Papa.parse(inputcsv.files[0], {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: function (results) {
-        dataset = [];
-        for (i = 0; i < results.data.length; i++) {
-          dataset.push(results.data[i]);
-        }
-      },
-    });
-    loaded = true;
-    loadbutton.innerHTML = "File loaded";
-  }
-}
 
 // ========================================================================
 // grab the necessary information from the variable dataset
@@ -457,25 +408,11 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
 }
 
 function main() {
-  if (typeof inputcsv.files[0] == "undefined") {
-    alert("No file uploaded yet!");
-    return;
-  }
-  if (!loaded) {
-    alert("File not loaded yet!");
-    return;
-  }
-
-  // hide buttons
-  inputcsv.style.display = "none";
-  loadbutton.style.display = "none";
-  drawbutton.style.display = "none";
-
   if (typeof dataset != "undefined" && dataset.length != 0) {
     data = prepareData(dataset);
     drawPartiture(data);
   }
-  // drawPartiture(prepareData(loadData()));
 }
 
+main();
 // window.addEventListener("resize", main);
