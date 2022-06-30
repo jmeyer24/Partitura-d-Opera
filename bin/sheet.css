@@ -47,8 +47,8 @@ th {
 /* .flag-mask { */
 img {
   position: absolute;
-  left: 170px;
-  width: 90px;
+  left: 180px;
+  width: 45px;
   -webkit-mask-image: linear-gradient(to right, black, transparent);
   mask-image: linear-gradient(to right, black, transparent);
   border: 1px solid black;

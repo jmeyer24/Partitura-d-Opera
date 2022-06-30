@@ -40,16 +40,18 @@ const textPosition = 3;
 // ========================================================================
 // aesthetic maps
 // ========================================================================
-const countryNoteMap = ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
+// there are at max 4 librettists for one componist
+const librettistDurationMap = [4, 8, 16, 32];
+// there are at max 7 different countries for one composer
+const countryNoteMap = ["c/4", "e/4", "g/4", "b/4", "d/5", "f/5", "a/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
+// there are at max 7 operas for one componist
 // TODO: get 7 good colors (ordinal or linear?)
 const operaColorMap = d3
   .scaleOrdinal()
   .domain([0, 6])
-  .range(["gold", "blue", "green", "darkgreen", "pink", "slateblue", "orange"]);
+  .range(["white", "skyblue", "blue", "purple", "red", "green", "lime"]);
 // const operaColorMap = d3.scaleOrdinal().domain([0, 6]).range(d3.schemeSet1);
-// const operaColorMap = d3.scaleLinear().domain([0, 6]).range(["lime", "blue"]);
-// there are at max 4 librettists for one componist
-const librettistDurationMap = [4, 8, 16, 32];
+// const operaColorMap = d3.scaleLinear().domain([0, 10]).range(["red", "black"]);
 
 // ========================================================================
 // save input file data in these variables

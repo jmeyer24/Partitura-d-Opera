@@ -54,21 +54,18 @@ $json_data = str_replace("'", " ", $json_data);
 
 <?
 /* draw the flags */
-$top = 72; //85;
-$interline = 15;
-$interstave = 100 - 5 * $interline;
+$maxCountries = 7; // maximum number of different countries a composer had
+$top = 75;
+$interline = 10;
+$interstave = 100 - $maxCountries * $interline;
 $countrys = ["austria", "czech-republic", "england", "france", "germany", "italy", "netherlands", "poland", "russia"];
 for($c = 0; $c < 10; $c++){
-	for($i = 0; $i < 5; $i++){
+	for($i = 0; $i < $maxCountries; $i++){
 		echo '<img src="img/flags/' . $countrys[array_rand($countrys)] . '-flag.jpg" style="top:' . $top . 'px; height:' . $interline-1 . 'px;">';
 		$top += $interline;
 	}
 	$top += $interstave;
 }
-/* <img class="flag-mask" style="top:96px" src="img/flags/italy-flag-icon-16.png"> */
-/* <img class="flag-mask" style="top:107px" src="img/flags/italy-flag-icon-16.png"> */
-/* <img class="flag-mask" style="top:118px" src="img/flags/italy-flag-icon-16.png"> */
-/* <img class="flag-mask" style="top:129px" src="img/flags/italy-flag-icon-16.png"> */
 
 /* draw a table */
 /* $header = $data[0]; */
