@@ -33,6 +33,10 @@ Other maybe relevant documentations
 - [CSS opacity gradient](https://stackoverflow.com/questions/15597167/css3-opacity-gradient)
 - [git branching](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
 
+Image resources:
+- [Old paper images](https://learn-photoshop.club/resources/graphics/50-high-resolution-old-paper-backgrounds-for-free/)
+- [Flags](https://www.countryflags.com/)
+
 <a name="3"></a>
 ## TODOs
 

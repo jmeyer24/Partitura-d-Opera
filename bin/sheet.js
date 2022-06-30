@@ -1,5 +1,5 @@
 // ========================================================================
-// setup
+// vexflow import/setup
 // ========================================================================
 const {
   Renderer,
@@ -20,19 +20,26 @@ const {
 } = Vex.Flow;
 
 // ========================================================================
+// opera data constants
+// ========================================================================
+const data_overall_timespan = 58;
+const data_num_composers = 10;
+
+// ========================================================================
 // meta-variables
 // ========================================================================
 const sheetWidth = 4000;
-const sheetHeight = 2000;
-const startX = 130;
-const startY = 0;
-const staveWidth = sheetWidth - 1.25 * startX;
-// TODO: compute this correctly
-const staveDistance = sheetHeight / (2.1 * 10);
+const startX = 180;
+const startY = 50;
+const staveWidth = sheetWidth - 1.5 * startX;
+const staveDistance = 100;
+const sheetHeight = data_num_composers * staveDistance + 2 * startY;
 const firstBarWidth = 90;
 const textPosition = 3;
-const max_operas = 50;
-const overall_timespan = 58; // all years
+
+// ========================================================================
+// aesthetic maps
+// ========================================================================
 const countryNoteMap = ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
 // TODO: get 7 good colors (ordinal or linear?)
 const operaColorMap = d3
@@ -47,14 +54,14 @@ const librettistDurationMap = [4, 8, 16, 32];
 // ========================================================================
 // save input file data in these variables
 // ========================================================================
-// let dataset = [];
 // TODO: we got the variable "dataset" from the sheet.php
+// let dataset = [];
 // console.log("this is dataset (.js): ", dataset);
 dataset = JSON.parse(dataset);
 // let data = [];
-let stave = null;
 // TODO: get a bass stave as well
 // TODO: search for stave2 and comment in all occurences
+let stave = null;
 // let stave2 = null;
 
 // ========================================================================
@@ -224,7 +231,7 @@ function getInformation(data, dataKey, unique) {
 }
 
 // ========================================================================
-// draw the partiture by some data
+// Draw the partiture by some data
 // ========================================================================
 function drawPartiture(dat) {
   context.clear();
@@ -247,7 +254,7 @@ function drawPartiture(dat) {
   //   ]);
 
   // ==============================================================
-  // create a stave for each composer
+  // Draw a stave for each composer
   // ==============================================================
   for (let c = 0; c < dat["numComposers"]; c++) {
     drawComposer(c);
@@ -287,6 +294,7 @@ function drawComposer(c) {
   stave
     .addTimeSignature(`${time}/4`)
     .addClef("treble")
+    .setText(getLastName(composerName), Modifier.Position.LEFT)
     .setContext(context)
     .draw();
   // stave2
@@ -297,20 +305,20 @@ function drawComposer(c) {
 
   // // draw left-side connectors and name
   // const conn_single_left = new StaveConnector(stave, stave2);
-  const conn_double = new StaveConnector(stave, stave);
+  // const conn_double = new StaveConnector(stave, stave);
   // const conn_double = new StaveConnector(stave, stave2);
   // conn_single_left
   //   .setType(StaveConnector.type.SINGLE_LEFT)
   //   .setContext(context)
   //   .draw();
-  conn_double
-    .setType(StaveConnector.type.DOUBLE)
-    .setText(getLastName(composerName), Modifier.Position.LEFT)
-    .setContext(context)
-    .draw();
+  // conn_double
+  //   .setType(StaveConnector.type.DOUBLE)
+  // .setText(getLastName(composerName), Modifier.Position.LEFT)
+  // .setContext(context)
+  // .draw();
 
   // ==============================================================
-  // create a bar for each year
+  // Draw a bar for each year
   // ==============================================================
   for (let y = 0; y < time; y++) {
     drawYear(c, y, years, time, shows, librettists, operas);
@@ -327,10 +335,11 @@ function drawComposer(c) {
 function drawYear(c, y, years, time, shows, librettists, operas) {
   // draw the bar of the current year
   let barX =
-    startXAfterFirst + (y * (staveWidth - firstBarWidth)) / overall_timespan;
+    startXAfterFirst +
+    (y * (staveWidth - firstBarWidth)) / data_overall_timespan;
   let barY = startY + c * staveDistance;
   // let barY = startY + 2 * c * staveDistance;
-  let barWidth = (staveWidth - firstBarWidth) / overall_timespan;
+  let barWidth = (staveWidth - firstBarWidth) / data_overall_timespan;
   stave = new Stave(barX, barY, barWidth);
   // stave2 = new Stave(barX, barY + staveDistance, barWidth);
   stave.setContext(context).draw();
@@ -349,7 +358,7 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
   // only draw notes, when there are notes to draw... error else
   if (showsInYear.length > 0) {
     // ==============================================================
-    // draw information as notes for each composer
+    // Draw information as notes for each composer
     // ==============================================================
     // represent each show as a colored note
     // note by country/place TODO: which one
@@ -415,4 +424,3 @@ function main() {
 }
 
 main();
-// window.addEventListener("resize", main);
