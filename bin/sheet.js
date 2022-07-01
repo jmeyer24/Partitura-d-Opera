@@ -22,37 +22,71 @@ const {
 // ========================================================================
 // opera data constants
 // ========================================================================
-const data_overall_timespan = 58;
-const data_num_composers = 10;
+const DATA_OVERALL_TIMESPAN = 59; // 59 years between 1775 and 1833
+const DATA_NUM_COMPOSERS = 10;
 
 // ========================================================================
-// meta-variables
+// option bools (config)
 // ========================================================================
-const sheetWidth = 8000;
-const startX = 180;
-const startY = 50;
-const staveWidth = sheetWidth - 1.5 * startX;
-const staveDistance = 100;
-const sheetHeight = data_num_composers * staveDistance + 2 * startY;
-const firstBarWidth = 90;
-const barWidth = (staveWidth - firstBarWidth) / data_overall_timespan;
-const textPosition = 3;
+// TODO: get a bass stave as well
+const GRANDSTAFF = false;
+const FITTIMELINE = true;
+const INVERSECOLORS = true;
+
+// ========================================================================
+// constants
+// ========================================================================
+const SHEETWIDTH = 8000;
+const STARTX = 180;
+const STARTY = 50;
+const STAVEWIDTH = SHEETWIDTH - 1.5 * STARTX;
+const STAVEDISTANCE = 100;
+const FIRSTBARWIDTH = 90;
+const BARWIDTH = (STAVEWIDTH - FIRSTBARWIDTH) / DATA_OVERALL_TIMESPAN;
+
+const SHEETHEIGHT = GRANDSTAFF
+  ? 2 * (DATA_NUM_COMPOSERS * STAVEDISTANCE + STARTY)
+  : DATA_NUM_COMPOSERS * STAVEDISTANCE + 2 * STARTY;
+
+let stave = null;
+let stave2 = null;
 
 // ========================================================================
 // aesthetic maps
 // ========================================================================
 // there are at max 4 librettists for one componist
-const librettistDurationMap = [4, 8, 16, 32];
+let librettistDurationMap = [4, 8, 16, 32];
+
 // there are at max 7 different countries for one composer
-const countryNoteMap = ["c/4", "e/4", "g/4", "b/4", "d/5", "f/5", "a/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
+let countryNoteMap = ["c/4", "e/4", "g/4", "b/4", "d/5", "f/5", "a/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
+
 // there are at max 7 operas for one componist
 // TODO: get 7 good colors (ordinal or linear?)
-const operaColorMap = d3
+let operaColorMap = d3
   .scaleOrdinal()
   .domain([0, 6])
   .range(["white", "skyblue", "blue", "purple", "red", "green", "lime"]);
-// const operaColorMap = d3.scaleOrdinal().domain([0, 6]).range(d3.schemeSet1);
-// const operaColorMap = d3.scaleLinear().domain([0, 10]).range(["red", "black"]);
+// let operaColorMap = d3.scaleOrdinal().domain([0, 6]).range(d3.schemeSet1);
+// let operaColorMap = d3.scaleLinear().domain([0, 10]).range(["red", "black"]);
+
+// not needed anymore
+// let librettistColorMap = d3
+//   .scaleSequential()
+//   .domain([0, 7])
+//   .interpolator(d3.interpolateViridis);
+// let librettistColorMap = d3
+//   .scaleOrdinal()
+//   .domain(librettistNoteMap)
+//   .range([
+//     "brown",
+//     "blue",
+//     "green",
+//     "purple",
+//     "slateblue",
+//     "darkgreen",
+//     "red",
+//     "orange",
+//   ]);
 
 // ========================================================================
 // save input file data in these variables
@@ -62,18 +96,14 @@ const operaColorMap = d3
 // console.log("this is dataset (.js): ", dataset);
 dataset = JSON.parse(dataset);
 // let data = [];
-// TODO: get a bass stave as well
-// TODO: search for stave2 and comment in all occurences
-let stave = null;
-// let stave2 = null;
 
 // ========================================================================
 // Create an SVG renderer and attach it to the DIV element named "output".
 // ========================================================================
-const div = document.getElementById("output");
+const output = document.getElementById("output");
 let datjson = 0;
-const renderer = new Renderer(div, Renderer.Backends.SVG);
-renderer.resize(sheetWidth, sheetHeight);
+const renderer = new Renderer(output, Renderer.Backends.SVG);
+renderer.resize(SHEETWIDTH, SHEETHEIGHT);
 
 // ========================================================================
 // Configure the rendering context.
@@ -86,11 +116,11 @@ const context = renderer.getContext();
 function prepareData() {
   // get all entries by the same key in an array (collect all composers etc)
   let sets = {};
-  for (const [key, value] of Object.entries(dataset[0])) {
+  for (let [key, value] of Object.entries(dataset[0])) {
     sets[key] = [value];
   }
   for (let i = 1; i < dataset.length; i++) {
-    for (const [key, value] of Object.entries(dataset[i])) {
+    for (let [key, value] of Object.entries(dataset[i])) {
       sets[key].push(value);
     }
   }
@@ -225,32 +255,15 @@ function getInformation(data, dataKey, unique) {
 }
 
 // ========================================================================
-// Draw the partiture by some data
+// Draw the partiture
 // ========================================================================
-function drawPartiture(dat) {
+function drawPartiture() {
   context.clear();
-  // let librettistColorMap = d3
-  //   .scaleSequential()
-  //   .domain([0, 7])
-  //   .interpolator(d3.interpolateViridis);
-  // let librettistColorMap = d3
-  //   .scaleOrdinal()
-  //   .domain(librettistNoteMap)
-  //   .range([
-  //     "brown",
-  //     "blue",
-  //     "green",
-  //     "purple",
-  //     "slateblue",
-  //     "darkgreen",
-  //     "red",
-  //     "orange",
-  //   ]);
 
   // ==============================================================
   // Draw a stave for each composer
   // ==============================================================
-  for (let c = 0; c < dat["numComposers"]; c++) {
+  for (let c = 0; c < data["numComposers"]; c++) {
     drawComposer(c);
   }
 }
@@ -265,6 +278,7 @@ function drawComposer(c) {
   let librettists = [];
   let operas = [];
   dataset.forEach(function (show) {
+    // TODO: sorting the composer has to be done in preprocessing
     if (show["composerMap"] == c + 1) {
       composerName = show["composer"];
       shows.push(show);
@@ -277,38 +291,62 @@ function drawComposer(c) {
   let time = Math.max(...years) - Math.min(...years) + 1;
 
   // draw the first bars of the stave
-  stave = new Stave(startX, startY + c * staveDistance, firstBarWidth);
-  // stave = new Stave(startX, startY + 2 * c * staveDistance, firstBarWidth);
-  // stave2 = new Stave(
-  //   startX,
-  //   startY + (2 * c + 1) * staveDistance,
-  //   firstBarWidth
-  // );
+  if (GRANDSTAFF) {
+    stave = new Stave(STARTX, STARTY + 2 * c * STAVEDISTANCE, FIRSTBARWIDTH);
+    stave2 = new Stave(
+      STARTX,
+      STARTY + (2 * c + 1) * STAVEDISTANCE,
+      FIRSTBARWIDTH
+    );
+  } else {
+    stave = new Stave(STARTX, STARTY + c * STAVEDISTANCE, FIRSTBARWIDTH);
+    stave.setText(getLastName(composerName), Modifier.Position.LEFT);
+  }
+
   stave
-    .addTimeSignature(`${time}/60`)
+    // TODO: put in legend: operas in ... years over a timespan of ... years
+    .addTimeSignature(years.length + "/" + time)
     .addClef("treble")
+    .setContext(context);
+
+  if (INVERSECOLORS) {
+    stave.context.setStrokeStyle("white");
+    stave.context.setFillStyle("white");
+    output.className = "output-inverse";
+  } else {
+    stave.context.setStrokeStyle("red");
+    stave.context.setFillStyle("black");
+    output.className = "output";
+  }
+
+  stave.draw();
+
+  let conn_double;
+  let conn_single_left;
+
+  if (GRANDSTAFF) {
+    stave2
+      .addTimeSignature(`${time}/4`)
+      .addClef("bass")
+      .setContext(context)
+      .draw();
+
+    // draw left-side connectors and name
+    conn_single_left = new StaveConnector(stave, stave2);
+    conn_single_left
+      .setType(StaveConnector.type.SINGLE_LEFT)
+      .setContext(context)
+      .draw();
+  } else {
+    stave2 = stave;
+  }
+
+  conn_double = new StaveConnector(stave, stave2);
+  conn_double
+    .setType(StaveConnector.type.DOUBLE)
     .setText(getLastName(composerName), Modifier.Position.LEFT)
     .setContext(context)
     .draw();
-  // stave2
-  //   .addTimeSignature(`${time}/4`)
-  //   .addClef("bass")
-  //   .setContext(context)
-  //   .draw();
-
-  // // draw left-side connectors and name
-  // const conn_single_left = new StaveConnector(stave, stave2);
-  // const conn_double = new StaveConnector(stave, stave);
-  // const conn_double = new StaveConnector(stave, stave2);
-  // conn_single_left
-  //   .setType(StaveConnector.type.SINGLE_LEFT)
-  //   .setContext(context)
-  //   .draw();
-  // conn_double
-  //   .setType(StaveConnector.type.DOUBLE)
-  // .setText(getLastName(composerName), Modifier.Position.LEFT)
-  // .setContext(context)
-  // .draw();
 
   // ==============================================================
   // Draw a bar for each year
@@ -317,12 +355,14 @@ function drawComposer(c) {
     drawYear(c, y, years, time, shows, librettists, operas);
   }
 
-  // // draw the right-side connector
-  // const conn_single_right = new StaveConnector(stave, stave2);
-  // conn_single_right
-  //   .setType(StaveConnector.type.SINGLE_RIGHT)
-  //   .setContext(context)
-  //   .draw();
+  if (GRANDSTAFF) {
+    // draw the right-side connector
+    let conn_single_right = new StaveConnector(stave, stave2);
+    conn_single_right
+      .setType(StaveConnector.type.SINGLE_RIGHT)
+      .setContext(context)
+      .draw();
+  }
 }
 
 function drawYear(c, y, years, time, shows, librettists, operas) {
@@ -337,26 +377,33 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
     .filter((show) => show !== undefined);
 
   // draw the bar of the current year
-  let startXAfterFirst =
-    startX + firstBarWidth + (Math.min(...years) - 1775) * barWidth;
-  // startXAfterFirst = startX + firstBarWidth;
+  let startXAfterFirst;
+  if (FITTIMELINE) {
+    startXAfterFirst =
+      STARTX + FIRSTBARWIDTH + (Math.min(...years) - 1775) * BARWIDTH;
+  } else {
+    startXAfterFirst = STARTX + FIRSTBARWIDTH;
+  }
+
   let barX =
     startXAfterFirst +
-    (y * (staveWidth - firstBarWidth)) / data_overall_timespan;
-  let barY = startY + c * staveDistance;
-  // let barY = startY + 2 * c * staveDistance;
-  stave = new Stave(barX, barY, barWidth);
-  // stave2 = new Stave(barX, barY + staveDistance, barWidth);
-  // TODO: add first and last year as bar numbers
-  if (
-    // fullYearList[y] % 10 == 0 ||
-    y == 0 ||
-    y == time - 1
-  ) {
+    (y * (STAVEWIDTH - FIRSTBARWIDTH)) / DATA_OVERALL_TIMESPAN;
+  if (GRANDSTAFF) {
+    let barY = STARTY + 2 * c * STAVEDISTANCE;
+    stave = new Stave(barX, barY, BARWIDTH);
+    stave2 = new Stave(barX, barY + STAVEDISTANCE, BARWIDTH);
+    stave2.setContext(context).draw();
+  } else {
+    let barY = STARTY + c * STAVEDISTANCE;
+    stave = new Stave(barX, barY, BARWIDTH);
+  }
+
+  // write the years below the stave
+  if (y == 0 || y == time - 1 || fullYearList[y] % 5 == 0) {
+    // maybe in if condition: fullYearList[y] % 5 == 0 ||
     stave.setText(fullYearList[y], Modifier.Position.BELOW);
   }
   stave.setContext(context).draw();
-  // stave2.setContext(context).draw();
 
   // only draw notes, when there are notes to draw... error else
   if (showsInYear.length > 0) {
@@ -373,22 +420,22 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
     // [pairs, histogram,,] = createPairs(countries, librettists);
 
     // note specifics
-    const keys = showsInYear.map(
+    let keys = showsInYear.map(
       (show) =>
         countryNoteMap[
           countries.findIndex((element) => element === show["country"])
         ]
     );
-    const durations = showsInYear.map(
+    let durations = showsInYear.map(
       (show) =>
         librettistDurationMap[
           librettists.findIndex((element) => element === show["librettist"])
         ]
     );
-    const fillStyles = showsInYear.map((show) =>
+    let fillStyles = showsInYear.map((show) =>
       operaColorMap(operas.findIndex((element) => element === show["title"]))
     );
-    const strokeStyles = "#000000";
+    let strokeStyles = "#000000";
 
     // get all the notes
     // number of notes per composer is all their operas
@@ -424,7 +471,7 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
 function main() {
   if (typeof dataset != "undefined" && dataset.length != 0) {
     data = prepareData(dataset);
-    drawPartiture(data);
+    drawPartiture();
   }
 }
 

@@ -11,23 +11,7 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-table {
-  border: 2px solid black;
-  border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-tr {
-  border: 1px solid black;
-}
-
-th {
-  background: snow;
-}
-
-#output {
+.output {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -42,6 +26,17 @@ th {
   background-size: cover;
   /* background-size: contain; */
   /* background-size: 100% 100%; */
+}
+
+.output-inverse {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: -1;
+
+  background-color: black;
 }
 
 /* .flag-mask { */

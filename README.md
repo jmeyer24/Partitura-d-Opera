@@ -41,33 +41,55 @@ Image resources:
 ## TODOs
 
 ### General
+---
 
-**Legende**, um den Graphen richtig zu lesen  
-Mit allen folgenden Infos:
-- Infos über Librettist wie Tod des Librettisten? In Legende!  
-- **Notenhöhe/-linien** für Orte (braucht es Bass-Linie?)
-- **Notenlänge** als Librettist (Farbe, wenn Notenlänge nicht hinhaut)  
-	Librettist mit meisten Noten hat kürzeste Notenwert  
-	In einem Takt: Librettist mit längestem Notenwert zuerst, dann zweitlängster usw, sodass alle Notenenden auf das Taktende fallen
-- **x-Achse/Takte**  
-	-> Noten sortiert nach Jahreszahlen  
-	-> Notenzeile als Zeitachse (1 Takt für 1 Jahr)
-	-> links/rechts unten erste/letzte Jahreszahl eines Komponisten
-- (**Farbe** für Oper)
-- Falls vorhanden: wenn Komponist gestorben, bevor letzte Oper aufgeführt, dann ein Symbol
-- **Triolenbalken** für ???
+- [x] **Notenzeile** für Komponist
+	- [x] erster/letzter Takt beschriftet mit erster/letzter Jahreszahl
+	- [ ] Geburts-/Sterbedatum als Symbole
+- [x] **Notenhöhe/-linie** für Ort
+	- [x] Grand-Staff als Option
+- [x] **Notenlänge** für Librettist
+	- [ ] häufigstes Vorkommen, kürzester Notenwert
+	- [ ] Pro Takt:
+		- längster Notenwert zuerst, dann zweitlängster, ...
+		- sodass alle Notenenden auf das Taktende fallen
+- [x] **Takte** für Jahr
+	- [x] 1 Takt pro Jahr
+	- [x] Zeitachse (aufsteigend sortiert)
+- [x] **Taktart** für Opernjahr über Zeitspanne
+- [ ] **Farbe** für Oper
+- [ ] ~~**Triolenbalken** für ???~~
 
-### Ästhetik
+### Legend
+---
 
-- verschieden lange Notenzeilen sortieren nach Startjahr des Komponisten (bei zwei gleichen dann Endjahr/Zeilenlänge)
-- Hintergrund als altes Notenpapier
-- Bilder von den Komponisten (Geburts-/Sterbedatum)
-- rechts der Notenlinie welches Land/Ort als Flagge (+ Ortsname) und die Flaggen reinverwischen (Filter-Effekt)
-- Seite scrollbar machen
+- [ ] **Legende** generell
+- [ ] Infos wie Geburts- und Sterbedatum
+	- [ ] Komponist
+	- [ ] Librettist
+
+### Aesthetic
+---
+
+- [x] Komponisten sortieren
+	- [x] erst Startjahr
+	- [x] dann Zeitspanne (Endjahr - Startjahr)
+- [x] Hintergrund altes Notenpapier
+- [ ] Bilder der Komponisten
+- [x] Flaggen
+	- [ ] zugeordnet zu Notenlinie/Land
+	- [x] neben Notenlinie
+	- [x] Filter-Effekt
+- [ ] Ortsnamen
+- [x] Seite scrollbar machen
 
 ### Optional
-- Vexflow handgeschriebener Stil
+---
+
+- [ ] Vexflow handgeschriebener Stil
 
 ### Vorschläge Seminar (Antwort auf Prototyp)
-- Keine Akkorde, einzelne Noten
-- Kurve unter Noten (Haltebogen für ab Viertelnoten)/Notenbalken (ab Achtelnoten) um Wiederholungen hervorzuheben
+---
+
+- [x] einzelne Noten, keine Akkorde
+- [ ] Haltebogen/Notenbalken um Wiederholungen zu zeigen

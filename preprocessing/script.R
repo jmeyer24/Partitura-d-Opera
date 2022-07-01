@@ -4,7 +4,6 @@
 setwd("D:/Documents/Studium/MSc Medieninformatik/10_Sommersemester_2022/GZ - Graphenzeichnen/partitura d'opera")
 
 library(tidyverse)
-library(plyr)
 library(gridExtra)
 library(ggplot2)
 library(ggsci)
@@ -17,7 +16,18 @@ opera_data <- read.csv(file = 'preprocessing/opera_performances_200_contest.csv'
 opera_data$rism_id <- NULL
 opera_data[opera_data$placename == "Carskoe Selo","placename"] <- "Puschkin"
 
-opera_data$composerMap <- as.integer(as.factor(opera_data$composer))
+# TODO: sort composer before constructing the respective map
+# this was done by hand, sorted by first year then length of years
+sortedComposer <- c(1,7,3,2,5,4,0,9,6,8) 
+# this was done by hand, sorted by first year then descending(!) length of years
+sortedComposer <- c(2,7,0,1,6,4,3,9,5,8) 
+names(sortedComposer) <- unique(opera_data$composer)
+opera_data$composerMap <- as.integer(factor(opera_data$composer, levels = names(sort(sortedComposer))))
+# unsorted
+# opera_data$composerMap <- as.integer(as.factor(opera_data$composer))
+
+# get the other maps
+# TODO: sort them as well?!
 opera_data$librettistMap <- as.integer(as.factor(opera_data$librettist))
 opera_data$placenameMap <- as.integer(as.factor(opera_data$placename))
 opera_data$operaMap <- as.integer(as.factor(opera_data$placename))
@@ -253,6 +263,8 @@ places$country <- c("Russland", "Italien", "Deutschland", "Deutschland",
 write.csv(places, "preprocessing/places_to_geocode.csv", row.names=FALSE, quote=FALSE)
 
 placesMap <- places[c("city", "country")]
+
+library(plyr)
 opera_data$country <- mapvalues(opera_data$placename, from=placesMap$city, to=placesMap$country)
 
 # geocoding: data postprocessing ==============================================
