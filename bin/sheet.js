@@ -28,13 +28,14 @@ const data_num_composers = 10;
 // ========================================================================
 // meta-variables
 // ========================================================================
-const sheetWidth = 4000;
+const sheetWidth = 8000;
 const startX = 180;
 const startY = 50;
 const staveWidth = sheetWidth - 1.5 * startX;
 const staveDistance = 100;
 const sheetHeight = data_num_composers * staveDistance + 2 * startY;
 const firstBarWidth = 90;
+const barWidth = (staveWidth - firstBarWidth) / data_overall_timespan;
 const textPosition = 3;
 
 // ========================================================================
@@ -161,15 +162,6 @@ Array.prototype.equals = function (array) {
 Object.defineProperty(Array.prototype, "equals", { enumerable: false });
 
 // ==============================================================
-// Helper function to draw annotations below note heads
-// ==============================================================
-const annotation = (text, hJustification, vJustification) =>
-  new Annotation(text)
-    .setFont(Font.SANS_SERIF, 10)
-    .setJustification(hJustification)
-    .setVerticalJustification(vJustification);
-
-// ==============================================================
 // Helper function to get the last name of the composer
 // ==============================================================
 function getLastName(composerName) {
@@ -292,9 +284,8 @@ function drawComposer(c) {
   //   startY + (2 * c + 1) * staveDistance,
   //   firstBarWidth
   // );
-  startXAfterFirst = startX + firstBarWidth;
   stave
-    .addTimeSignature(`${time}/4`)
+    .addTimeSignature(`${time}/60`)
     .addClef("treble")
     .setText(getLastName(composerName), Modifier.Position.LEFT)
     .setContext(context)
@@ -335,18 +326,6 @@ function drawComposer(c) {
 }
 
 function drawYear(c, y, years, time, shows, librettists, operas) {
-  // draw the bar of the current year
-  let barX =
-    startXAfterFirst +
-    (y * (staveWidth - firstBarWidth)) / data_overall_timespan;
-  let barY = startY + c * staveDistance;
-  // let barY = startY + 2 * c * staveDistance;
-  let barWidth = (staveWidth - firstBarWidth) / data_overall_timespan;
-  stave = new Stave(barX, barY, barWidth);
-  // stave2 = new Stave(barX, barY + staveDistance, barWidth);
-  stave.setContext(context).draw();
-  // stave2.setContext(context).draw();
-
   // get all shows in that year
   let fullYearList = Array.from(new Array(time), (x, i) => i + years[0]);
   let showsInYear = shows
@@ -356,6 +335,28 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
       }
     })
     .filter((show) => show !== undefined);
+
+  // draw the bar of the current year
+  let startXAfterFirst =
+    startX + firstBarWidth + (Math.min(...years) - 1775) * barWidth;
+  // startXAfterFirst = startX + firstBarWidth;
+  let barX =
+    startXAfterFirst +
+    (y * (staveWidth - firstBarWidth)) / data_overall_timespan;
+  let barY = startY + c * staveDistance;
+  // let barY = startY + 2 * c * staveDistance;
+  stave = new Stave(barX, barY, barWidth);
+  // stave2 = new Stave(barX, barY + staveDistance, barWidth);
+  // TODO: add first and last year as bar numbers
+  if (
+    // fullYearList[y] % 10 == 0 ||
+    y == 0 ||
+    y == time - 1
+  ) {
+    stave.setText(fullYearList[y], Modifier.Position.BELOW);
+  }
+  stave.setContext(context).draw();
+  // stave2.setContext(context).draw();
 
   // only draw notes, when there are notes to draw... error else
   if (showsInYear.length > 0) {
@@ -397,23 +398,25 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
         new StaveNote({
           keys: [keys[s]],
           duration: durations,
-        }).setStyle({
-          fillStyle: fillStyles[s],
-          strokeStyle: fillStyles[s],
+          // TODO: uncomment for colored notes
+          // }).setStyle({
+          // fillStyle: fillStyles[s],
+          // strokeStyle: fillStyles[s],
         })
-        // TODO: add first and last year as bar numbers
-        // .addModifier(annotation(histogram[s], s + 1, textPosition), 0)
       );
     }
 
     // TODO sort and connect the librettists with beams
-    var beams = Beam.generateBeams(notes, { stem_direction: 1 });
-    // var beams = Beam.generateBeams(notes, {
-    //   groups: [new Fraction(time, 4)],
-    // });
+    // var beams = Beam.generateBeams(notes, { stem_direction: 1 });
+    var beams = Beam.generateBeams(notes, {
+      groups: [new Fraction(time, 4)],
+    });
     Formatter.FormatAndDraw(context, stave, notes, false);
     beams.forEach(function (beam) {
-      beam.setStyle({ fillStyle: fillStyles[0] }).setContext(context).draw();
+      beam
+        //.setStyle({ fillStyle: fillStyles[0] })
+        .setContext(context)
+        .draw();
     });
   }
 }

@@ -53,19 +53,21 @@ $json_data = str_replace("'", " ", $json_data);
 		<script src="sheet.js" type="text/javascript"></script>
 
 <?
-/* draw the flags */
-$maxCountries = 7; // maximum number of different countries a composer had
-$top = 75;
-$interline = 10;
-$interstave = 100 - $maxCountries * $interline;
-$countrys = ["austria", "czech-republic", "england", "france", "germany", "italy", "netherlands", "poland", "russia"];
-for($c = 0; $c < 10; $c++){
-	for($i = 0; $i < $maxCountries; $i++){
-		echo '<img src="img/flags/' . $countrys[array_rand($countrys)] . '-flag.jpg" style="top:' . $top . 'px; height:' . $interline-1 . 'px;">';
-		$top += $interline;
-	}
-	$top += $interstave;
-}
+/* TODO: uncomment for the flags */
+/* this saves some loading time when commented... */
+/* /1* draw the flags *1/ */
+/* $maxCountries = 7; // maximum number of different countries a composer had */
+/* $top = 75; */
+/* $interline = 10; */
+/* $interstave = 100 - $maxCountries * $interline; */
+/* $countrys = ["austria", "czech-republic", "england", "france", "germany", "italy", "netherlands", "poland", "russia"]; */
+/* for($c = 0; $c < 10; $c++){ */
+/* 	for($i = 0; $i < $maxCountries; $i++){ */
+/* 		echo '<img src="img/flags/' . $countrys[array_rand($countrys)] . '-flag.jpg" style="top:' . $top . 'px; height:' . $interline-1 . 'px;">'; */
+/* 		$top += $interline; */
+/* 	} */
+/* 	$top += $interstave; */
+/* } */
 
 /* draw a table */
 /* $header = $data[0]; */
