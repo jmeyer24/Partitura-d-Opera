@@ -1,4 +1,4 @@
-<?
+<?php
 /* php version reading the file and displaying some html */
 /* https://stackoverflow.com/questions/9139202/how-to-parse-a-csv-file-using-php */
 
@@ -15,7 +15,7 @@ function utf8ize($d) {
 }
 
 /* get the file as an array and set the keys to the respective values ("composer",...) */
-$data = array_map('str_getcsv', file('..\data\opera_data.csv'));
+$data = array_map('str_getcsv', file('..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'opera_data.csv'));
 array_walk($data, function(&$a) use ($data) {
 	$a = array_combine($data[0], $a);
 });
@@ -52,7 +52,7 @@ $json_data = str_replace("'", " ", $json_data);
 		<div id="output" class="output"></div>
 		<script src="sheet.js" type="text/javascript"></script>
 
-<?
+<?php
 /* TODO: uncomment for the flags */
 /* this saves some loading time when commented... */
 /* draw the flags */
