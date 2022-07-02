@@ -373,7 +373,6 @@ function drawComposer(c) {
     flag.setAttribute("style", "top:" + (STARTY + c * STAVEDISTANCE + (5 - i) * 10 + 30) + "px; height: 9px");
     document.body.appendChild(flag);
   }
-  console.log(countries);
 }
 
 function drawYear(c, y, years, time, shows, librettists, operas) {
