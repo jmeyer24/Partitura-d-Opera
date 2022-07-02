@@ -455,7 +455,7 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
       notes.push(
         new StaveNote({
           keys: [keys[s]],
-          duration: durations,
+          duration: [durations[s]],
           // TODO: uncomment for colored notes
           // }).setStyle({
           // fillStyle: fillStyles[s],
