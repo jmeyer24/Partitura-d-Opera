@@ -35,6 +35,7 @@ Other maybe relevant documentations
 
 Image resources:
 - [Old paper images](https://learn-photoshop.club/resources/graphics/50-high-resolution-old-paper-backgrounds-for-free/)
+- [Tiling old paper image](https://lostandtaken.com/downloads/tan-seamless-paper-textures-2/)
 - [Flags](https://www.countryflags.com/)
 
 <a name="3"></a>
