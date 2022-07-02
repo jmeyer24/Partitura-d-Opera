@@ -55,7 +55,7 @@ let stave2 = null;
 // aesthetic maps
 // ========================================================================
 // there are at max 4 librettists for one componist
-let librettistDurationMap = [4, 8, 16, 32];
+let librettistDurationMap = [1, 2, 4, 8];
 
 // there are at max 6 different countries for one composer
 let countryNoteMap = ["d/4", "f/4", "a/4", "c/5", "e/5", "g/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
