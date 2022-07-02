@@ -46,7 +46,7 @@ const STARTX = 180;
 const STARTY = 50;
 const STAVEWIDTH = SHEETWIDTH - 1.5 * STARTX;
 const STAVEDISTANCE = 100;
-const FIRSTBARWIDTH = 90;
+const FIRSTBARWIDTH = 135;
 const BARWIDTH = (STAVEWIDTH - FIRSTBARWIDTH) / DATA_OVERALL_TIMESPAN;
 
 const SHEETHEIGHT = GRANDSTAFF
@@ -297,14 +297,14 @@ function drawComposer(c) {
 
   // draw the first bars of the stave
   if (GRANDSTAFF) {
-    stave = new Stave(STARTX, STARTY + 2 * c * STAVEDISTANCE, FIRSTBARWIDTH);
-    stave2 = new Stave(
-      STARTX,
+    var stave = new Stave(STARTX + (years[0] - 1775) * BARWIDTH, STARTY + 2 * c * STAVEDISTANCE, FIRSTBARWIDTH);
+    var stave2 = new Stave(
+      STARTX + (years[0] - 1775) * BARWIDTH,
       STARTY + (2 * c + 1) * STAVEDISTANCE,
       FIRSTBARWIDTH
     );
   } else {
-    stave = new Stave(STARTX, STARTY + c * STAVEDISTANCE, FIRSTBARWIDTH);
+    var stave = new Stave(STARTX + (years[0] - 1775) * BARWIDTH, STARTY + c * STAVEDISTANCE, FIRSTBARWIDTH);
     stave.setText(getLastName(composerName), Modifier.Position.LEFT);
   }
 
@@ -373,10 +373,16 @@ function drawComposer(c) {
   let countries = getInformation(shows, "country", true);
   for (let i = 0; i < countries.length; i++) {
     let country = countries[i];
-    let flag = document.createElement("img");
-    flag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-    flag.setAttribute("style", "top:" + (STARTY + c * STAVEDISTANCE + (5 - i) * 10 + 30) + "px; height: 9px");
-    document.body.appendChild(flag);
+
+    let lflag = document.createElement("img");
+    lflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
+    lflag.setAttribute("style", "left: " + (stave.getX() + 90) + "px; top: " + (stave.getY() + 80 - i * 10) + "px; height: 9px");
+    document.body.appendChild(lflag);
+
+    let rflag = document.createElement("img");
+    rflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
+    rflag.setAttribute("style", "left: " + (stave.getX() + 135 + BARWIDTH * time) + "px; top: " + (stave.getY() + 80 - i * 10) + "px; height: 9px");
+    document.body.appendChild(rflag);
   }
 }
 
@@ -405,12 +411,12 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
     (y * (STAVEWIDTH - FIRSTBARWIDTH)) / DATA_OVERALL_TIMESPAN;
   if (GRANDSTAFF) {
     let barY = STARTY + 2 * c * STAVEDISTANCE;
-    stave = new Stave(barX, barY, BARWIDTH);
-    stave2 = new Stave(barX, barY + STAVEDISTANCE, BARWIDTH);
+    var stave = new Stave(barX, barY, BARWIDTH);
+    var stave2 = new Stave(barX, barY + STAVEDISTANCE, BARWIDTH);
     stave2.setContext(context).draw();
   } else {
     let barY = STARTY + c * STAVEDISTANCE;
-    stave = new Stave(barX, barY, BARWIDTH);
+    var stave = new Stave(barX, barY, BARWIDTH);
   }
 
   // write the years below the stave
