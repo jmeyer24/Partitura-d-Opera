@@ -19,11 +19,9 @@ body::-webkit-scrollbar {
   position: absolute;
   z-index: -1;
 
-  background-image: url(img/backgrounds/old-paper-background-texture-12.jpg);
-  background-repeat: no-repeat;
+  background-image: url(img/backgrounds/tan-seamless-paper-textures-2.jpg);
   background-attachment: scroll;
   /* background-attachment: fixed; */
-  background-size: cover;
   /* background-size: contain; */
   /* background-size: 100% 100%; */
 }
