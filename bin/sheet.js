@@ -31,7 +31,7 @@ const DATA_NUM_COMPOSERS = 10;
 // TODO: get a bass stave as well
 const GRANDSTAFF = false;
 const FITTIMELINE = true;
-const INVERSECOLORS = true;
+const INVERSECOLORS = false;
 
 // ========================================================================
 // constants
@@ -57,8 +57,8 @@ let stave2 = null;
 // there are at max 4 librettists for one componist
 let librettistDurationMap = [4, 8, 16, 32];
 
-// there are at max 7 different countries for one composer
-let countryNoteMap = ["c/4", "e/4", "g/4", "b/4", "d/5", "f/5", "a/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
+// there are at max 6 different countries for one composer
+let countryNoteMap = ["d/4", "f/4", "a/4", "c/5", "e/5", "g/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
 
 // there are at max 7 operas for one componist
 // TODO: get 7 good colors (ordinal or linear?)
@@ -363,6 +363,17 @@ function drawComposer(c) {
       .setContext(context)
       .draw();
   }
+
+  // draw the flags
+  let countries = getInformation(shows, "country", true);
+  for (let i = 0; i < countries.length; i++) {
+    let country = countries[i];
+    let flag = document.createElement("img");
+    flag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
+    flag.setAttribute("style", "top:" + (STARTY + c * STAVEDISTANCE + (5 - i) * 10 + 30) + "px; height: 9px");
+    document.body.appendChild(flag);
+  }
+  console.log(countries);
 }
 
 function drawYear(c, y, years, time, shows, librettists, operas) {
