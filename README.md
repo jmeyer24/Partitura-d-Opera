@@ -85,6 +85,8 @@ Image resources:
 	- [x] Filter-Effekt
 - [ ] Ortsnamen
 - [x] Seite scrollbar machen
+- [ ] Sonderzeichen wie ì oder í richtig darstellen ("i mit Akut")
+
 
 ### Optional
 ---
