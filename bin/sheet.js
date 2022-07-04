@@ -28,6 +28,7 @@ const DATA_NUM_COMPOSERS = 10;
 // ========================================================================
 const GRANDSTAFF = false;
 const FITTIMELINE = true;
+const SHOWFULLTIMELINE = true; // only effective when FITTIMELINE = false;
 const INVERSECOLORS = false;
 
 // ========================================================================
@@ -405,7 +406,14 @@ function drawComposer(c) {
 
 function drawYear(c, y, years, time, shows, librettists, operas) {
   // get all shows in that year
-  let fullYearList = Array.from(new Array(time), (x, i) => i + years[0]);
+  // TODO put that where the staves are created!!!
+  let timeperiod;
+  if (SHOWFULLTIMELINE) {
+    timeperiod = DATA_OVERALL_TIMESPAN;
+  } else {
+    timeperiod = time;
+  }
+  let fullYearList = Array.from(new Array(timeperiod), (x, i) => i + years[0]);
   let showsInYear = shows
     .map((show) => {
       if (parseInt(show["performance_year"]) == fullYearList[y]) {
