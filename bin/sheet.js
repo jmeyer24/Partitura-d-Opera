@@ -58,34 +58,6 @@ let librettistDurationMap = [4, 2, 8, 1];
 // there are at max 6 different countries for one composer
 let countryNoteMap = ["d/4", "f/4", "a/4", "c/5", "e/5", "g/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
 
-// there are at max 7 operas for one componist
-// TODO: get 7 good colors (ordinal or linear?)
-let operaColorMap = d3
-  .scaleOrdinal()
-  .domain([0, 6])
-  .range(["white", "skyblue", "blue", "purple", "red", "green", "lime"]);
-// let operaColorMap = d3.scaleOrdinal().domain([0, 6]).range(d3.schemeSet1);
-// let operaColorMap = d3.scaleLinear().domain([0, 10]).range(["red", "black"]);
-
-// not needed anymore
-// let librettistColorMap = d3
-//   .scaleSequential()
-//   .domain([0, 7])
-//   .interpolator(d3.interpolateViridis);
-// let librettistColorMap = d3
-//   .scaleOrdinal()
-//   .domain(librettistNoteMap)
-//   .range([
-//     "brown",
-//     "blue",
-//     "green",
-//     "purple",
-//     "slateblue",
-//     "darkgreen",
-//     "red",
-//     "orange",
-//   ]);
-
 // ========================================================================
 // save input file data in these variables
 // ========================================================================
@@ -323,8 +295,8 @@ function drawComposer(c) {
     stave.context.setFillStyle("white");
     output.className = "output-inverse";
   } else {
-    stave.context.setStrokeStyle("red");
-    stave.context.setFillStyle("black");
+    // stave.context.setStrokeStyle("red");
+    // stave.context.setFillStyle("black");
     output.className = "output";
   }
 
@@ -451,20 +423,19 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
   }
   stave.setContext(context).draw();
 
-  // only draw notes, when there are notes to draw... error else
-  if (showsInYear.length > 0) {
-    // ==============================================================
-    // Draw information as notes for each composer
-    // ==============================================================
-    // represent each show as a colored note
-    // note by country/place TODO: which one
-    // note length by librettist
-    // color by opera
-    countries = getInformation(shows, "country", true);
-    librettists = getInformation(shows, "librettist", true);
-    operas = getInformation(shows, "title", true);
-    // [pairs, histogram,,] = createPairs(countries, librettists);
+  // ==============================================================
+  // Draw information as notes for each composer
+  // ==============================================================
+  // represent each show as a note
+  // note by country/place TODO: which one
+  // note length by librettist
+  countries = getInformation(shows, "country", true);
+  librettists = getInformation(shows, "librettist", true);
+  operas = getInformation(shows, "title", true);
+  // [pairs, histogram,,] = createPairs(countries, librettists);
 
+  // only draw notes, when there are notes to draw... else draw pause
+  if (showsInYear.length > 0) {
     // note specifics
     let keys = showsInYear.map(
       (show) =>
@@ -478,10 +449,6 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
           librettists.findIndex((element) => element === show["librettist"])
         ]
     );
-    let fillStyles = showsInYear.map((show) =>
-      operaColorMap(operas.findIndex((element) => element === show["title"]))
-    );
-    let strokeStyles = "#000000";
 
     // get all the notes
     // number of notes per composer is all their operas
@@ -491,10 +458,6 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
         new StaveNote({
           keys: [keys[s]],
           duration: [durations[s]],
-          // TODO: uncomment for colored notes
-          // }).setStyle({
-          // fillStyle: fillStyles[s],
-          // strokeStyle: fillStyles[s],
         })
       );
     }
@@ -506,10 +469,7 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
     });
     Formatter.FormatAndDraw(context, stave, notes, false);
     beams.forEach(function (beam) {
-      beam
-        //.setStyle({ fillStyle: fillStyles[0] })
-        .setContext(context)
-        .draw();
+      beam.setContext(context).draw();
     });
   }
 }
