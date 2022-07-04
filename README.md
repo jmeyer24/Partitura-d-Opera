@@ -13,11 +13,12 @@ This project is in association with University Tuebingen in the summer semester 
 
 Visualization via the open-source library [vexflow](https://github.com/0xfe/vexflow):
 <!-- 1. find file under `bin/sheet.php` -->
-1. Run a light server via command line when being in the base directory
+1. Run a light server via command line when being in the **base directory**
 	```command
 	php -S 127.0.0.1:8000
 	```
-1. Run the file `sheet.php` via the URL `localhost:8000/bin/sheet.php`
+1. Run via the URL `localhost:8000`
+<!-- 1. Run the file `sheet.php` via the URL `localhost:8000/bin/sheet.php` -->
 
 <a name="2"></a>
 ## Links
@@ -78,7 +79,8 @@ Image resources:
 - [x] Hintergrund altes Notenpapier
 - [ ] Bilder der Komponisten
 - [x] Flaggen
-	- [ ] zugeordnet zu Notenlinie/Land
+	- [x] zugeordnet zu Notenlinie/Land
+	- [ ] funktioniert auch mit Option GRANDSTAFF
 	- [x] neben Notenlinie
 	- [x] Filter-Effekt
 - [ ] Ortsnamen
@@ -87,7 +89,8 @@ Image resources:
 ### Optional
 ---
 
-- [ ] Vexflow handgeschriebener Stil
+- [x] Vexflow handgeschriebener Stil
+- [ ] Komponistennamen Font handgeschriebener Stil
 
 ### Vorschläge Seminar (Antwort auf Prototyp)
 ---

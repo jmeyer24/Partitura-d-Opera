@@ -5,18 +5,11 @@ const {
   Renderer,
   Stave,
   StaveNote,
-  GhostNote,
-  Voice,
   Beam,
   Formatter,
-  TextNote,
   StaveConnector,
   Modifier,
-  Factory,
-  Tuplet,
   Fraction,
-  Annotation,
-  Font,
 } = Vex.Flow;
 
 // ========================================================================
@@ -33,7 +26,6 @@ const DATA_NUM_COMPOSERS = 10;
 // ========================================================================
 // option bools (config)
 // ========================================================================
-// TODO: get a bass stave as well
 const GRANDSTAFF = false;
 const FITTIMELINE = true;
 const INVERSECOLORS = false;
@@ -96,11 +88,8 @@ let operaColorMap = d3
 // ========================================================================
 // save input file data in these variables
 // ========================================================================
-// TODO: we got the variable "dataset" from the sheet.php
-// let dataset = [];
-// console.log("this is dataset (.js): ", dataset);
+// getting the variable "dataset" from the sheet.php, then parse it to JSON
 dataset = JSON.parse(dataset);
-// let data = [];
 
 // ========================================================================
 // Create an SVG renderer and attach it to the DIV element named "output".
@@ -296,15 +285,29 @@ function drawComposer(c) {
   let time = Math.max(...years) - Math.min(...years) + 1;
 
   // draw the first bars of the stave
+  let setFirstStaveAtX;
+  if (FITTIMELINE) {
+    setFirstStaveAtX = years[0] - 1775;
+  } else {
+    setFirstStaveAtX = 0;
+  }
   if (GRANDSTAFF) {
-    var stave = new Stave(STARTX + (years[0] - 1775) * BARWIDTH, STARTY + 2 * c * STAVEDISTANCE, FIRSTBARWIDTH);
+    var stave = new Stave(
+      STARTX + setFirstStaveAtX * BARWIDTH,
+      STARTY + 2 * c * STAVEDISTANCE,
+      FIRSTBARWIDTH
+    );
     var stave2 = new Stave(
-      STARTX + (years[0] - 1775) * BARWIDTH,
+      STARTX + setFirstStaveAtX * BARWIDTH,
       STARTY + (2 * c + 1) * STAVEDISTANCE,
       FIRSTBARWIDTH
     );
   } else {
-    var stave = new Stave(STARTX + (years[0] - 1775) * BARWIDTH, STARTY + c * STAVEDISTANCE, FIRSTBARWIDTH);
+    var stave = new Stave(
+      STARTX + setFirstStaveAtX * BARWIDTH,
+      STARTY + c * STAVEDISTANCE,
+      FIRSTBARWIDTH
+    );
     stave.setText(getLastName(composerName), Modifier.Position.LEFT);
   }
 
@@ -376,12 +379,26 @@ function drawComposer(c) {
 
     let lflag = document.createElement("img");
     lflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-    lflag.setAttribute("style", "left: " + (stave.getX() + 90) + "px; top: " + (stave.getY() + 80 - i * 10) + "px; height: 9px");
+    lflag.setAttribute(
+      "style",
+      "left: " +
+        (stave.getX() + 90) +
+        "px; top: " +
+        (stave.getY() + 80 - i * 10) +
+        "px; height: 9px"
+    );
     document.body.appendChild(lflag);
 
     let rflag = document.createElement("img");
     rflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-    rflag.setAttribute("style", "left: " + (stave.getX() + 135 + BARWIDTH * time) + "px; top: " + (stave.getY() + 80 - i * 10) + "px; height: 9px");
+    rflag.setAttribute(
+      "style",
+      "left: " +
+        (stave.getX() + 135 + BARWIDTH * time) +
+        "px; top: " +
+        (stave.getY() + 80 - i * 10) +
+        "px; height: 9px"
+    );
     document.body.appendChild(rflag);
   }
 }
