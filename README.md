@@ -69,6 +69,7 @@ Image resources:
 - [ ] Infos wie Geburts- und Sterbedatum
 	- [ ] Komponist
 	- [ ] Librettist
+- [ ] Zeitstrahl der Länderentwicklung mit Flaggen (mit Anzahl shows?!)
 
 ### Aesthetic
 ---
