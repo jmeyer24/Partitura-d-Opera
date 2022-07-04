@@ -511,6 +511,16 @@ function drawYear(c, y, years, time, shows, librettists, operas) {
         .setContext(context)
         .draw();
     });
+    for (let s = 0; s < showsInYear.length; s++) {
+      let show = showsInYear[s];
+      let note = notes[s].attrs.el;
+      console.log(note);
+      let title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      title.innerHTML = "Titel: " + show["title"]
+                      + "\nLibrettist: " + show["librettist"]
+                      + "\nOrt: " + show["placename"];
+      note.appendChild(title);
+    }
   }
 }
 

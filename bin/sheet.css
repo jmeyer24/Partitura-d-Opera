@@ -17,7 +17,6 @@ body::-webkit-scrollbar {
   align-items: center;
   justify-content: center;
   position: absolute;
-  z-index: -1;
 
   background-image: url(img/backgrounds/tan-seamless-paper-textures-2.jpg);
   background-attachment: scroll;
@@ -32,7 +31,6 @@ body::-webkit-scrollbar {
   align-items: center;
   justify-content: center;
   position: absolute;
-  z-index: -1;
 
   background-color: black;
 }
