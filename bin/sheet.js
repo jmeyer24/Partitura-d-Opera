@@ -591,15 +591,33 @@ function drawYear(c, y, years, time, shows, operas) {
   //   beam.setContext(context).draw();
   // });
 
+  // Add tooltips
+  let countIndicesStave = 0;
+  let countIndicesStave2 = 0;
   for (let s = 0; s < showsInYear.length; s++) {
     let show = showsInYear[s];
-    let note = (s >= notes.length ? notes2[s-notes.length] : notes[s]).attrs.el;
-    console.log(note);
-    let title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-    title.innerHTML = "Titel: " + show["title"]
-                    + "\nLibrettist: " + show["librettist"]
-                    + "\nOrt: " + show["placename"];
-    note.appendChild(title);
+    let countryIndex = allCountries.findIndex(
+      (element) => element === show["country"]
+    );
+    let isTop = countryIndex < allCountries.length / 2;
+    if (isTop) {
+      countIndicesStave++;
+    } else {
+      countIndicesStave2++;
+    }
+
+    let note = isTop
+      ? notes[s - countIndicesStave2]
+      : notes2[s - countIndicesStave];
+    let title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.innerHTML =
+      "Titel: " +
+      show["title"] +
+      "\nLibrettist: " +
+      show["librettist"] +
+      "\nOrt: " +
+      show["placename"];
+    note.attrs.el.appendChild(title);
   }
 }
 
