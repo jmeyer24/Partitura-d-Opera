@@ -107,12 +107,15 @@ Image resources:
 
 - [ ] balance finden zwischen ästhetic der notenwerte (ganze, halbe, ...) und musikalischer realität (ein takt hat nur eine ganze note, bzw 4 viertel) -> übersichtlichkeit -> beams?! -> unterscheidbarkeit war der grund!
 - [ ] Namen in ähnlichem Stil -> font raussuchen ,das einheitlich passt
-- [ ] anzahl der auftritte in die taktzahl -> "anzahl jahre mit/ohne (!entscheiden) auftritten" über "anzahl auftritte insgesamt"
-- [ ] Grandstaff mit Flaggen, sodass jede linie/lücke einer flagge zugeordnet wird -> fixe notenhöhen für länder -> für komponisten nur deutschland/italien flaggen so positionieren, dass se gut aussehen?!
-- [ ] Konnektoren über alle Notenzeilen hinweg?! -> Liste aller staves nötig! -> nicht! FITTIMELINE dann oder? -> schauen ob's passt
+- [x] anzahl der auftritte in die taktzahl -> "anzahl jahre mit/ohne (!entscheiden) auftritten" über "anzahl auftritte insgesamt"
+- [x] Grandstaff mit Flaggen, sodass jede linie/lücke einer flagge zugeordnet wird -> fixe notenhöhen für länder
+	- [ ] für komponisten nur deutschland/italien flaggen so positionieren, dass se gut aussehen?!
+	- [ ] Notenhöhe der Flaggen anpassen, sodass italien und Deutschland...?
+- [ ] ~~Konnektoren über alle Notenzeilen hinweg?! -> Liste aller staves nötig! -> nicht! FITTIMELINE dann oder? -> schauen ob's passt~~
 - [ ] Ein großes "Blatt" oder A4 Format Blätter? Einrücken der ersten Zeile mit Komponistennamen oder jede Zeile Komponistennamen? -> beides anbieten! Poster das lange nehmen -> wieder schauen
-(- [ ] Flaggen Italien und Deutschland sind bei jedem Komponisten -> weglassen? Vereinheitlichen? Flaggen nicht pro Komponist, sondern pro Jahr? Also vertikal als Hintergrundstreifen? Oder für jede Flagge eine Art Klammer auf die Komponisten zeigend, die in dem Land gespielt haben? Ist übersichtlicher oder?)
-- [ ] Notenhöhe der Flaggen anpassen, sodass italien und Deutschland
-- [ ] Pausenzeichen für Takte ohne Noten -> ja, machen wir mal rein -> abchecken, ob zu unübersichtlich -> grau statt schwarz?!
+- [ ] ~~Flaggen Italien und Deutschland sind bei jedem Komponisten -> weglassen? Vereinheitlichen?~~
+	- [ ] Oder für jede Flagge eine Art Klammer auf die Komponisten zeigend, die in dem Land gespielt haben? Ist übersichtlicher oder?
+- [ ] Flaggen nicht pro Komponist, sondern pro Jahr? Also vertikal als Hintergrundstreifen?
+- [x] Pausenzeichen für Takte ohne Noten -> ja, machen wir mal rein -> abchecken, ob zu unübersichtlich -> grau statt schwarz?!
 - [ ] Flaggen öfters darstellen, mitte oder alle 5 jahre
-- [ ] Taktzahlen (1775) links oben, nicht so groß drunter
+- [x] Taktzahlen (1775) links oben, nicht so groß drunter
