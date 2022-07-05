@@ -119,3 +119,8 @@ Image resources:
 - [x] Pausenzeichen für Takte ohne Noten -> ja, machen wir mal rein -> abchecken, ob zu unübersichtlich -> grau statt schwarz?!
 - [ ] Flaggen öfters darstellen, mitte oder alle 5 jahre
 - [x] Taktzahlen (1775) links oben, nicht so groß drunter
+
+### Bugfixing
+---
+
+- [ ] Die Tooltips zeigen nicht die richtigen Librettisten an, zumindest unterscheiden die sich für gleiche Notenwerte -> Fehler in Tooltips oder Notengenerierung?
