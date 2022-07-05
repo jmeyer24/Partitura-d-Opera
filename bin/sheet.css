@@ -35,12 +35,21 @@ body::-webkit-scrollbar {
   background-color: black;
 }
 
-/* .flag-mask { */
 img {
   position: absolute;
-  left: 180px;
-  width: 45px;
-  -webkit-mask-image: linear-gradient(to right, black, transparent);
-  mask-image: linear-gradient(to right, black, transparent);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 40%,
+    black 60%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 40%,
+    black 60%,
+    transparent
+  );
   border: 1px solid black;
 }

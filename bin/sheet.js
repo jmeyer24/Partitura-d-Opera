@@ -31,7 +31,7 @@ const DATANUMCOMPOSERS = 10;
 // ========================================================================
 
 const FLAGHEIGHT = 10;
-const IMGWIDTH = 45;
+const FLAGWIDTH = 35;
 
 // ========================================================================
 // option bools (config)
@@ -395,6 +395,7 @@ function drawComposer(c) {
     }
   }
 
+  // TODO: right side connector
   // if (GRANDSTAFF) {
   //   // draw the right-side connector
   //   let conn_single_right = new StaveConnector(stave, stave2);
@@ -404,55 +405,48 @@ function drawComposer(c) {
   //     .draw();
   // }
 
-  // draw the flags
-  let allCountries = getInformation(dataset, "country", true);
-  let countries = getInformation(shows, "country", true);
-  for (let i = 0; i < allCountries.length; i++) {
-    let country = allCountries[i];
-    if (countries.includes(country)) {
-      let lflag = document.createElement("img");
-      lflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-      if (i < allCountries.length / 2) {
-        lflag.setAttribute(
-          "style",
-          "left: " +
-            (stave.getX() + FIRSTBARWIDTH - IMGWIDTH) +
-            "px; top: " +
-            (stave.getY() + 74 - i * FLAGHEIGHT) +
-            "px; height: " +
-            FLAGHEIGHT +
-            "px"
-        );
-      } else {
-        lflag.setAttribute(
-          "style",
-          "left: " +
-            (stave2.getX() + FIRSTBARWIDTH - IMGWIDTH) +
-            "px; top: " +
-            (stave2.getY() + 124 - i * FLAGHEIGHT) +
-            "px; height: " +
-            FLAGHEIGHT +
-            "px"
-        );
-      }
+  //       let rflag = document.createElement("img");
+  //       rflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
+  //       if (i < allCountries.length / 2) {
+  //         rflag.setAttribute(
+  //           "style",
+  //           "left: " +
+  //             (stave.getX() + FIRSTBARWIDTH - FLAGWIDTH + i * BARWIDTH) +
+  //             "px; top: " +
+  //             (stave.getY() + 74 - i * FLAGHEIGHT) +
+  //             "px; height: " +
+  //             FLAGHEIGHT +
+  //             "px"
+  //         );
+  //       } else {
+  //         rflag.setAttribute(
+  //           "style",
+  //           "left: " +
+  //             (stave2.getX() + FIRSTBARWIDTH - FLAGWIDTH + i * BARWIDTH) +
+  //             "px; top: " +
+  //             (stave2.getY() + 124 - i * FLAGHEIGHT) +
+  //             "px; height: " +
+  //             FLAGHEIGHT +
+  //             "px"
+  //         );
+  //       }
+  //       document.body.appendChild(rflag);
 
-      document.body.appendChild(lflag);
-
-      // let rflag = document.createElement("img");
-      // rflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-      // rflag.setAttribute(
-      //   "style",
-      //   "left: " +
-      //     (stave.getX() + 135 + BARWIDTH * time) +
-      //     "px; top: " +
-      //     (stave.getY() + 80 - i * 10) +
-      //     "px; height: " +
-      //     FLAGHEIGHT +
-      //     "px"
-      // );
-      // document.body.appendChild(rflag);
-    }
-  }
+  //       // let rflag = document.createElement("img");
+  //       // rflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
+  //       // rflag.setAttribute(
+  //       //   "style",
+  //       //   "left: " +
+  //       //     (stave.getX() + 135 + BARWIDTH * time) +
+  //       //     "px; top: " +
+  //       //     (stave.getY() + 80 - i * 10) +
+  //       //     "px; height: " +
+  //       //     FLAGHEIGHT +
+  //       //     "px"
+  //       // );
+  //       // document.body.appendChild(rflag);
+  //     }
+  //   }
 }
 
 function drawYear(c, y, years, time, shows, operas) {
@@ -521,6 +515,30 @@ function drawYear(c, y, years, time, shows, operas) {
   } else {
     conn_single = new StaveConnector(stave, stave2);
     conn_single.setType(StaveConnector.type.SINGLE).setContext(context).draw();
+  }
+
+  // draw the country flags
+  if (y == 0 || y == time - 1 || fullYearList[y] % 5 == 0) {
+    let allCountries = getInformation(dataset, "country", true);
+    let countries = getInformation(shows, "country", true);
+    for (let i = 0; i < allCountries.length; i++) {
+      let country = allCountries[i];
+      if (countries.includes(country)) {
+        let flag = document.createElement("img");
+        let isTop = i < allCountries.length / 2;
+        flag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
+        let style = "left: " + (stave.getX() - FLAGWIDTH / 2) + "px; top: ";
+        if (isTop) {
+          style += stave.getY() + 74 - i * FLAGHEIGHT;
+        } else {
+          style += stave2.getY() + 124 - i * FLAGHEIGHT;
+        }
+        style +=
+          "px; height: " + FLAGHEIGHT + "px; width: " + FLAGWIDTH + "px;";
+        flag.setAttribute("style", style);
+        document.body.appendChild(flag);
+      }
+    }
   }
 
   // ==============================================================
