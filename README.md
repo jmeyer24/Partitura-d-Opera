@@ -47,11 +47,10 @@ Image resources:
 
 - [x] **Notenzeile** für Komponist
 	- [x] erster/letzter Takt beschriftet mit erster/letzter Jahreszahl
-	- [ ] Geburts-/Sterbedatum als Symbole
 - [x] **Notenhöhe/-linie** für Ort
 	- [x] Grand-Staff als Option
 - [x] **Notenlänge** für Librettist
-	- [ ] häufigstes Vorkommen, kürzester Notenwert
+	- [ ] ~~häufigstes Vorkommen, kürzester Notenwert~~
 	- [ ] Pro Takt:
 		- längster Notenwert zuerst, dann zweitlängster, ...
 		- sodass alle Notenenden auf das Taktende fallen
@@ -60,7 +59,10 @@ Image resources:
 	- [x] Zeitachse (aufsteigend sortiert)
 - [x] **Taktart** für Opernjahr über Zeitspanne
 - [ ] **Farbe** für Oper
-- [ ] ~~**Triolenbalken** für ???~~
+- [x] **Taktangabe** für Anzahl von Opern über Librettisten und Jahre über Zeitperiode
+- [x] **Taktzahlen** für die Jahreszahlen (z.B. 1775)
+- [ ] **Notenreihenfolge** für ???
+- [ ] **Triolenbalken** für ???
 
 ### Legend
 ---
@@ -69,7 +71,7 @@ Image resources:
 - [ ] Infos wie Geburts- und Sterbedatum
 	- [ ] Komponist
 	- [ ] Librettist
-- [ ] Zeitstrahl der Länderentwicklung mit Flaggen (mit Anzahl shows?!)
+- [ ] Zeitstrahl der Länderentwicklung mit Flaggen (mit Anzahl shows)
 
 ### Aesthetic
 ---
@@ -78,15 +80,24 @@ Image resources:
 	- [x] erst Startjahr
 	- [x] dann Zeitspanne (Endjahr - Startjahr)
 - [x] Hintergrund altes Notenpapier
-- [ ] Bilder der Komponisten
+- [ ] Komponisten (pro Notenzeile also)
+	- [ ] Bilder
+	- [ ] Geburts-/Sterbedatum in Takten als Symbole
 - [x] Flaggen
 	- [x] zugeordnet zu Notenlinie/Land
-	- [ ] funktioniert auch mit Option GRANDSTAFF
-	- [x] neben Notenlinie
+	- [x] funktioniert auch mit Option GRANDSTAFF
+	- [x] ~~neben Notenlinie~~
+	- [x] über Taktlinie
 	- [x] Filter-Effekt
+	- [x] alle 5 jahre
+	- [ ] zusätzlich pro Jahr als vertikaler Hintergrund
 - [ ] Ortsnamen
 - [x] Seite scrollbar machen
 - [ ] Sonderzeichen wie ì oder í richtig darstellen ("i mit Akut")
+- [ ] Balance zwischen Ästhetik der Notenwerte (Übersichtlichkeit - Unterscheidbarkeit) und musikalischer Realität finden
+- [x] Grandstaff mit Flaggen, sodass jeder Linie eine Flagge zugeordnet wird
+	- [x] Länder nach Anzahl der Opern sortiert
+- [x] Pausenzeichen für Takte ohne Noten
 
 
 ### Optional
@@ -94,33 +105,19 @@ Image resources:
 
 - [x] Vexflow handgeschriebener Stil
 - [ ] Komponistennamen Font handgeschriebener Stil
-- [ ] zwei Komponisten, die nebeneinanderpassen (anfossi/mayr z.b.) in eine zeile packen
-- [ ] fülle die einzelnen Takte mit Pausen so auf, dass ein musikalisch korrekter Takt entsteht
+- [ ] ~~zwei Komponisten, die nebeneinander passen (z.B. Anfossi/Mayr) in eine Zeile packen~~
+- [ ] einzelne Takte so mit Pausen auffüllen, dass ein musikalisch korrekter Takt entsteht
+- [ ] Konnektoren über alle Notenzeilen hinweg
+- [ ] Option für A4 Format
+- [ ] Anzahl der verschiedenen(!) Orte in einem Land:  
+	Zahl hinter Flagge &harr; irgendwie farblich
 
 ### Vorschläge Seminar (Antwort auf Prototyp)
 ---
 
 - [x] einzelne Noten, keine Akkorde
 - [ ] Haltebogen/Notenbalken um Wiederholungen zu zeigen
-
-### Vielleicht?
----
-
-- [ ] balance finden zwischen ästhetic der notenwerte (ganze, halbe, ...) und musikalischer realität (ein takt hat nur eine ganze note, bzw 4 viertel) -> übersichtlichkeit -> beams?! -> unterscheidbarkeit war der grund!
-- [ ] Namen in ähnlichem Stil -> font raussuchen ,das einheitlich passt
-- [x] anzahl der auftritte in die taktzahl -> "anzahl jahre mit/ohne (!entscheiden) auftritten" über "anzahl auftritte insgesamt"
-- [x] Grandstaff mit Flaggen, sodass jede linie/lücke einer flagge zugeordnet wird -> fixe notenhöhen für länder
-	- [ ] für komponisten nur deutschland/italien flaggen so positionieren, dass se gut aussehen?!
-	- [ ] Notenhöhe der Flaggen anpassen, sodass italien und Deutschland...?
-- [ ] ~~Konnektoren über alle Notenzeilen hinweg?! -> Liste aller staves nötig! -> nicht! FITTIMELINE dann oder? -> schauen ob's passt~~
-- [ ] Ein großes "Blatt" oder A4 Format Blätter? Einrücken der ersten Zeile mit Komponistennamen oder jede Zeile Komponistennamen? -> beides anbieten! Poster das lange nehmen -> wieder schauen
-- [ ] ~~Flaggen Italien und Deutschland sind bei jedem Komponisten -> weglassen? Vereinheitlichen?~~
-	- [ ] Oder für jede Flagge eine Art Klammer auf die Komponisten zeigend, die in dem Land gespielt haben? Ist übersichtlicher oder?
-- [ ] Flaggen nicht pro Komponist, sondern pro Jahr? Also vertikal als Hintergrundstreifen?
-- [x] Pausenzeichen für Takte ohne Noten -> ja, machen wir mal rein -> abchecken, ob zu unübersichtlich -> grau statt schwarz?!
-- [ ] Flaggen öfters darstellen, mitte oder alle 5 jahre
-- [x] Taktzahlen (1775) links oben, nicht so groß drunter
-- [ ] Anzahl der verschiedenen(!) Orte in einem Land als Zahl hinter die Flagge? Oder anders dargestellt? Farbe?
+	- [ ] dazu Noten nach Notenwerten sortieren?
 
 ### Bugfixing
 ---
