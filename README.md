@@ -95,6 +95,7 @@ Image resources:
 - [x] Vexflow handgeschriebener Stil
 - [ ] Komponistennamen Font handgeschriebener Stil
 - [ ] zwei Komponisten, die nebeneinanderpassen (anfossi/mayr z.b.) in eine zeile packen
+- [ ] fülle die einzelnen Takte mit Pausen so auf, dass ein musikalisch korrekter Takt entsteht
 
 ### Vorschläge Seminar (Antwort auf Prototyp)
 ---

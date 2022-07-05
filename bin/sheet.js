@@ -32,6 +32,7 @@ const DATANUMCOMPOSERS = 10;
 
 const FLAGHEIGHT = 10;
 const FLAGWIDTH = 35;
+const FLAGTOPOFFSET = 74;
 
 // ========================================================================
 // option bools (config)
@@ -66,10 +67,13 @@ const SHEETHEIGHT = GRANDSTAFF
 // aesthetics
 // ========================================================================
 // there are at max 4 librettists for one componist
-let librettistDurationMap = [4, 2, 8, 1];
+let librettistDurationMap = [2, 4, 8, 16]; //[4, 2, 8, 1];
 
 // there are at max 6 different countries for one composer
-let countryNoteMap = ["e/4", "g/4", "b/4", "d/5", "f/5"]; // ["g/4", "a/4", "b/4", "c/5", "d/5", "e/5", "f/5"];
+// such that more frequent countries are in the middle of the stave
+let countryNoteMap = ["b/4", "d/5", "g/4", "f/5", "e/4"];
+// order seen from ascending order e,g,b,d,f or notes
+let countryNoteMapIndices = [2, 3, 1, 4, 0];
 
 // marking the bars with notes
 const MARKCOLOR = "black";
@@ -366,7 +370,11 @@ function drawComposer(c) {
       lastStave = stave2;
       conn_single = new StaveConnector(firstStave, lastStave);
       conn_single
-        .setType(StaveConnector.type.SINGLE)
+        .setType(StaveConnector.type.SINGLE_RIGHT)
+        .setContext(context)
+        .draw();
+      conn_single
+        .setType(StaveConnector.type.SINGLE_LEFT)
         .setContext(context)
         .draw();
       conn_double = new StaveConnector(firstStave, lastStave);
@@ -377,79 +385,42 @@ function drawComposer(c) {
     }
   } else {
     conn_single = new StaveConnector(stave, stave2);
-    conn_single.setType(StaveConnector.type.SINGLE).setContext(context).draw();
+    conn_single
+      .setType(StaveConnector.type.SINGLE_RIGHT)
+      .setContext(context)
+      .draw();
+    conn_single
+      .setType(StaveConnector.type.SINGLE_LEFT)
+      .setContext(context)
+      .draw();
     conn_double = new StaveConnector(stave, stave2);
     conn_double.setType(StaveConnector.type.DOUBLE).setContext(context).draw();
   }
+
+  // order the countries by number of shows
+  allCountries = getInformation(dataset, "country", true);
+  allCountries = allCountries.sort((a, b) => {
+    return (
+      dataset.filter((show) => show["country"] === b).length -
+      dataset.filter((show) => show["country"] === a).length
+    );
+  });
 
   // ==============================================================
   // Draw a bar for each year
   // ==============================================================
   if (SHOWFULLTIMELINE) {
     for (let y = 0; y < DATAOVERALLTIMESPAN; y++) {
-      drawYear(c, y, years, time, shows, operas);
+      drawYear(c, y, years, time, shows, operas, allCountries);
     }
   } else {
     for (let y = 0; y < time; y++) {
-      drawYear(c, y, years, time, shows, operas);
+      drawYear(c, y, years, time, shows, operas, allCountries);
     }
   }
-
-  // TODO: right side connector
-  // if (GRANDSTAFF) {
-  //   // draw the right-side connector
-  //   let conn_single_right = new StaveConnector(stave, stave2);
-  //   conn_single_right
-  //     .setType(StaveConnector.type.SINGLE_RIGHT)
-  //     .setContext(context)
-  //     .draw();
-  // }
-
-  //       let rflag = document.createElement("img");
-  //       rflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-  //       if (i < allCountries.length / 2) {
-  //         rflag.setAttribute(
-  //           "style",
-  //           "left: " +
-  //             (stave.getX() + FIRSTBARWIDTH - FLAGWIDTH + i * BARWIDTH) +
-  //             "px; top: " +
-  //             (stave.getY() + 74 - i * FLAGHEIGHT) +
-  //             "px; height: " +
-  //             FLAGHEIGHT +
-  //             "px"
-  //         );
-  //       } else {
-  //         rflag.setAttribute(
-  //           "style",
-  //           "left: " +
-  //             (stave2.getX() + FIRSTBARWIDTH - FLAGWIDTH + i * BARWIDTH) +
-  //             "px; top: " +
-  //             (stave2.getY() + 124 - i * FLAGHEIGHT) +
-  //             "px; height: " +
-  //             FLAGHEIGHT +
-  //             "px"
-  //         );
-  //       }
-  //       document.body.appendChild(rflag);
-
-  //       // let rflag = document.createElement("img");
-  //       // rflag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-  //       // rflag.setAttribute(
-  //       //   "style",
-  //       //   "left: " +
-  //       //     (stave.getX() + 135 + BARWIDTH * time) +
-  //       //     "px; top: " +
-  //       //     (stave.getY() + 80 - i * 10) +
-  //       //     "px; height: " +
-  //       //     FLAGHEIGHT +
-  //       //     "px"
-  //       // );
-  //       // document.body.appendChild(rflag);
-  //     }
-  //   }
 }
 
-function drawYear(c, y, years, time, shows, operas) {
+function drawYear(c, y, years, time, shows, operas, allCountries) {
   // get all shows in that year
   // TODO put that where the staves are created!!!
   let fullYearList;
@@ -508,30 +479,49 @@ function drawYear(c, y, years, time, shows, operas) {
       lastStaves.push(stave2);
       conn_single = new StaveConnector(firstStaves[y], lastStaves[y]);
       conn_single
-        .setType(StaveConnector.type.SINGLE)
+        .setType(StaveConnector.type.SINGLE_RIGHT)
         .setContext(context)
         .draw();
     }
   } else {
     conn_single = new StaveConnector(stave, stave2);
-    conn_single.setType(StaveConnector.type.SINGLE).setContext(context).draw();
+    conn_single
+      .setType(StaveConnector.type.SINGLE_RIGHT)
+      .setContext(context)
+      .draw();
   }
+
+  // ==============================================================
+  // Draw information as notes and flags for each composer
+  // ==============================================================
+  // represent each show as a note
+  // note height by country with flags
+  // note length by librettist
+  countries = getInformation(shows, "country", true);
+  librettists = getInformation(shows, "librettist", true);
+  operas = getInformation(shows, "title", true);
+  var notes = [];
+  var notes2 = [];
+  let isTop = (i) => !(i % 2);
 
   // draw the country flags
   if (y == 0 || y == time - 1 || fullYearList[y] % 5 == 0) {
-    let allCountries = getInformation(dataset, "country", true);
-    let countries = getInformation(shows, "country", true);
     for (let i = 0; i < allCountries.length; i++) {
       let country = allCountries[i];
       if (countries.includes(country)) {
         let flag = document.createElement("img");
-        let isTop = i < allCountries.length / 2;
         flag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
         let style = "left: " + (stave.getX() - FLAGWIDTH / 2) + "px; top: ";
-        if (isTop) {
-          style += stave.getY() + 74 - i * FLAGHEIGHT;
+        if (isTop(i)) {
+          style +=
+            stave.getY() +
+            FLAGTOPOFFSET -
+            countryNoteMapIndices[i / 2] * FLAGHEIGHT;
         } else {
-          style += stave2.getY() + 124 - i * FLAGHEIGHT;
+          style +=
+            stave2.getY() +
+            FLAGTOPOFFSET -
+            countryNoteMapIndices[(i - 1) / 2] * FLAGHEIGHT;
         }
         style +=
           "px; height: " + FLAGHEIGHT + "px; width: " + FLAGWIDTH + "px;";
@@ -541,27 +531,15 @@ function drawYear(c, y, years, time, shows, operas) {
     }
   }
 
-  // ==============================================================
-  // Draw information as notes for each composer
-  // ==============================================================
-  // represent each show as a note
-  // note by country/place TODO: which one
-  // note length by librettist
-  allCountries = getInformation(dataset, "country", true);
-  countries = getInformation(shows, "country", true);
-  librettists = getInformation(shows, "librettist", true);
-  operas = getInformation(shows, "title", true);
-  var notes = [];
-  var notes2 = [];
-
   // TODO use createPairs()
 
   // note specifics
   let keys = showsInYear.map(
     (show) =>
       countryNoteMap[
-        allCountries.findIndex((element) => element === show["country"]) %
-          (allCountries.length / 2)
+        Math.floor(
+          allCountries.findIndex((element) => element === show["country"]) / 2
+        )
       ]
   );
   let durations = showsInYear.map(
@@ -573,6 +551,9 @@ function drawYear(c, y, years, time, shows, operas) {
 
   // get all the notes
   // number of notes per composer is all their operas
+  let order = [];
+  let countStave = 0;
+  let countStave2 = 0;
   for (let s = 0; s < showsInYear.length; s++) {
     let countryIndex = allCountries.findIndex(
       (element) => element === showsInYear[s]["country"]
@@ -583,10 +564,12 @@ function drawYear(c, y, years, time, shows, operas) {
       duration: [durations[s]],
     }).setStyle({ fillStyle: MARKCOLOR, strokeStyle: MARKCOLOR });
 
-    if (countryIndex < allCountries.length / 2) {
+    if (isTop(countryIndex)) {
       notes.push(note);
+      order.push([0, countStave++]);
     } else {
       notes2.push(note);
+      order.push([1, countStave2++]);
     }
   }
 
@@ -599,34 +582,20 @@ function drawYear(c, y, years, time, shows, operas) {
   }
 
   // TODO sort and connect the librettists with beams
-  // // var beams = Beam.generateBeams(notes, { stem_direction: 1 });
-  // var beams = Beam.generateBeams(notes, {
-  //   groups: [new Fraction(time, 4)],
-  // });
+  // var beams = Beam.generateBeams(notes, { stem_direction: 1 });
+  var beams = Beam.generateBeams(notes, {
+    groups: [new Fraction(time, 4)],
+  });
   Formatter.FormatAndDraw(context, stave, notes, false);
   Formatter.FormatAndDraw(context, stave2, notes2, false);
-  // beams.forEach(function (beam) {
-  //   beam.setContext(context).draw();
-  // });
+  beams.forEach(function (beam) {
+    beam.setContext(context).draw();
+  });
 
   // Add tooltips
-  let countIndicesStave = 0;
-  let countIndicesStave2 = 0;
   for (let s = 0; s < showsInYear.length; s++) {
     let show = showsInYear[s];
-    let countryIndex = allCountries.findIndex(
-      (element) => element === show["country"]
-    );
-    let isTop = countryIndex < allCountries.length / 2;
-    if (isTop) {
-      countIndicesStave++;
-    } else {
-      countIndicesStave2++;
-    }
-
-    let note = isTop
-      ? notes[s - countIndicesStave2]
-      : notes2[s - countIndicesStave];
+    let note = !order[s][0] ? notes[order[s][1]] : notes2[order[s][1]];
     let title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.innerHTML =
       "Titel: " +
