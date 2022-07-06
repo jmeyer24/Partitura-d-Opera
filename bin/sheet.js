@@ -438,7 +438,7 @@ function drawComposer(c) {
   
   // draw composer image
   let img = document.createElement("img");
-  img.setAttribute("src", "img/composers/" + lastName + ".jpg");
+  img.setAttribute("src", "img/composers/" + lastName + ".png");
   let style = "top: " + (stave.getY() + 30) + "px; "
             + "left: " + (stave.getX() - 80) + "px;";
   img.setAttribute("style", style);
