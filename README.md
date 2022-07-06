@@ -118,6 +118,20 @@ Image resources:
 - [x] einzelne Noten, keine Akkorde
 - [ ] Haltebogen/Notenbalken um Wiederholungen zu zeigen
 	- [ ] dazu Noten nach Notenwerten sortieren?
+- [ ] alle 8 Librettisten per Notenwerte, entscheiden:
+	- [ ] punktierte Noten
+	- [ ] Notenhals nach oben oder unten
+- [ ] alle Flaggen/Länder in eine Notenzeile, über Vorzeichen z.B.
+	- [ ] dafür dann Basslinie für Informationen über einzelne Opern
+	- [ ] Notenzwischenräume nutzen
+	- [ ] Ideen:  
+	eine Oktave hat 8 Noten oder  
+	mit Vorzeichen eine Klaviertastatur hinmalen (weiße und schwarze Tasten)
+- [ ] Artikulationen über Noten für:
+	- [ ] ersten Opernauftritt
+- [ ] Neues Thema (Boromir's Theme) für verschiedene Epochen
+- [ ] Entscheiden, ob Flaggen 1 mal oder öfters
+- [ ] Vielleicht: Flaggen sortieren nach Höhen-/Breitengrad
 
 ### Bugfixing
 ---
