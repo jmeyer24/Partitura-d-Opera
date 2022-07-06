@@ -75,6 +75,32 @@ let countryNoteMap = ["b/4", "d/5", "g/4", "f/5", "e/4"];
 // order seen from ascending order e,g,b,d,f or notes
 let countryNoteMapIndices = [2, 3, 1, 4, 0];
 
+let birthYears = {
+  "Anfossi" : 1727,
+  "Cimarosa" : 1749,
+  "Martín" : 1754,
+  "Mayr" : 1763,
+  "Meyerbeer" : 1791,
+  "Mozart" : 1756,
+  "Piccinni" : 1728,
+  "Paisiello" : 1740,
+  "Rossini" : 1792,
+  "Salieri" : 1750
+}
+
+let deathYears = {
+  "Anfossi" : 1797,
+  "Cimarosa" : 1801,
+  "Martín" : 1806,
+  "Mayr" : 1845,
+  "Meyerbeer" : 1864,
+  "Mozart" : 1791 ,
+  "Piccinni" : 1800,
+  "Paisiello" : 1816,
+  "Rossini" : 1868,
+  "Salieri" : 1825
+}
+
 // marking the bars with notes
 const MARKCOLOR = "black";
 const NONMARKCOLOR = "black";
@@ -296,6 +322,8 @@ function drawComposer(c) {
   years = [...new Set(years)].map(Number).sort();
   let time = Math.max(...years) - Math.min(...years) + 1;
 
+  let lastName = getLastName(composerName);
+
   // draw the first bars of the stave
   let setFirstStaveAtX;
   if (FITTIMELINE) {
@@ -320,7 +348,7 @@ function drawComposer(c) {
       STARTY + c * STAVEDISTANCE,
       FIRSTBARWIDTH
     );
-    stave.setText(getLastName(composerName), Modifier.Position.LEFT);
+    stave.setText(lastName, Modifier.Position.LEFT);
   }
 
   stave
@@ -355,11 +383,11 @@ function drawComposer(c) {
     conn_brace = new StaveConnector(stave, stave2);
     conn_brace
       .setType(StaveConnector.type.BRACE)
-      .setText(getLastName(composerName), Modifier.Position.LEFT)
+      .setText(lastName, Modifier.Position.LEFT)
       .setContext(context)
       .draw();
   } else {
-    stave.setText(getLastName(composerName), Modifier.Position.LEFT);
+    stave.setText(lastName, Modifier.Position.LEFT);
     stave2 = stave;
   }
 
@@ -396,6 +424,26 @@ function drawComposer(c) {
     conn_double = new StaveConnector(stave, stave2);
     conn_double.setType(StaveConnector.type.DOUBLE).setContext(context).draw();
   }
+
+  // get name element
+  let els = Array.from(document.getElementsByTagNameNS("http://www.w3.org/2000/svg", "text"));
+  let el = els.find((e) => e.innerHTML == lastName);
+
+  // write birth and death year
+  let birthDeath = el.cloneNode(false);
+  birthDeath.innerHTML = birthYears[lastName] + " - " + deathYears[lastName];
+  birthDeath.setAttribute("y", +el.getAttribute("y") + 20);
+  birthDeath.setAttribute("font-size", "12px");
+  el.parentElement.appendChild(birthDeath);
+  
+  // draw composer image
+  let img = document.createElement("img");
+  img.setAttribute("src", "img/composers/" + lastName + ".jpg");
+  let style = "top: " + (stave.getY() + 30) + "px; "
+            + "left: " + (stave.getX() - 80) + "px;";
+  img.setAttribute("style", style);
+  img.setAttribute("class", "composer");
+  document.body.appendChild(img);
 
   // order the countries by number of shows
   allCountries = getInformation(dataset, "country", true);
@@ -526,6 +574,7 @@ function drawYear(c, y, years, time, shows, operas, allCountries) {
         style +=
           "px; height: " + FLAGHEIGHT + "px; width: " + FLAGWIDTH + "px;";
         flag.setAttribute("style", style);
+        flag.setAttribute("class", "flag");
         document.body.appendChild(flag);
       }
     }

@@ -81,7 +81,7 @@ Image resources:
 	- [x] dann Zeitspanne (Endjahr - Startjahr)
 - [x] Hintergrund altes Notenpapier
 - [ ] Komponisten (pro Notenzeile also)
-	- [ ] Bilder
+	- [ ] Bilder zuschneiden und besser positionieren
 	- [ ] Geburts-/Sterbedatum in Takten als Symbole
 - [x] Flaggen
 	- [x] zugeordnet zu Notenlinie/Land
