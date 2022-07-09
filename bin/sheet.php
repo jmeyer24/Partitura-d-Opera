@@ -50,8 +50,9 @@ $json_data = str_replace("'", " ", $json_data);
 /* <?php echo "console.log('this is json_data (.php): ', '$json_data');";?> */
 </script>
 		<div id="output" class="output"></div>
-		<script src="sheet.js" type="text/javascript"></script>
-
-
+		<script type="module" src="functions.js"></script>
+		<script type="module" src="draw.js"></script>
+		<!--script type="module" src="sheet.js"></script-->
+		<script type="module" src="main.js"></script>
 	</body>
 </html>
