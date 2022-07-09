@@ -50,9 +50,10 @@ Image resources:
 - [x] **Notenhöhe/-linie** für Ort
 	- [x] Grand-Staff als Option
 - [x] **Notenlänge** für Librettist
-	- [ ] ~~häufigstes Vorkommen, kürzester Notenwert~~
+	- [x] häufigstes Vorkommen, kürzester Notenwert
 	- [ ] Pro Takt:
 		- längster Notenwert zuerst, dann zweitlängster, ...
+		- zeitlich verschoben
 		- sodass alle Notenenden auf das Taktende fallen
 - [x] **Takte** für Jahr
 	- [x] 1 Takt pro Jahr
@@ -61,7 +62,7 @@ Image resources:
 - [ ] **Farbe** für Oper
 - [x] **Taktangabe** für Anzahl von Opern über Librettisten und Jahre über Zeitperiode
 - [x] **Taktzahlen** für die Jahreszahlen (z.B. 1775)
-- [ ] **Notenreihenfolge** für ???
+- [ ] **Notenreihenfolge** für Librettisten???
 - [ ] **Triolenbalken** für ???
 
 ### Legend
@@ -80,9 +81,11 @@ Image resources:
 	- [x] erst Startjahr
 	- [x] dann Zeitspanne (Endjahr - Startjahr)
 - [x] Hintergrund altes Notenpapier
-- [ ] Komponisten (pro Notenzeile also)
-	- [ ] Bilder zuschneiden und besser positionieren
-	- [ ] Geburts-/Sterbedatum in Takten als Symbole
+- [x] Komponisten
+	- [x] Bilder zuschneiden
+	- [ ] besser positionieren
+	- [x] Geburts-/Sterbedatum
+		- [ ] in Takten als Symbole
 - [x] Flaggen
 	- [x] zugeordnet zu Notenlinie/Land
 	- [x] funktioniert auch mit Option GRANDSTAFF
@@ -93,7 +96,7 @@ Image resources:
 	- [ ] zusätzlich pro Jahr als vertikaler Hintergrund
 - [ ] Ortsnamen
 - [x] Seite scrollbar machen
-- [ ] Sonderzeichen wie ì oder í richtig darstellen ("i mit Akut")
+- [x] Sonderzeichen wie ì oder í richtig darstellen ("i mit Akut")
 - [ ] Balance zwischen Ästhetik der Notenwerte (Übersichtlichkeit - Unterscheidbarkeit) und musikalischer Realität finden
 - [x] Grandstaff mit Flaggen, sodass jeder Linie eine Flagge zugeordnet wird
 	- [x] Länder nach Anzahl der Opern sortiert
@@ -117,11 +120,13 @@ Image resources:
 
 - [x] einzelne Noten, keine Akkorde
 - [ ] Haltebogen/Notenbalken um Wiederholungen zu zeigen
-	- [ ] dazu Noten nach Notenwerten sortieren?
-- [ ] alle 8 Librettisten per Notenwerte, entscheiden:
-	- [ ] punktierte Noten
-	- [ ] Notenhals nach oben oder unten
+- [x] Noten im Takt nach Notenwerten sortiert
+- [x] alle 8 Librettisten per Notenwerte, entscheiden:
+	- [x] punktierte Noten
+	- [x] sortiert nach Häufigkeit
+	- [ ] ~~Notenhals nach oben oder unten~~
 - [ ] alle Flaggen/Länder in eine Notenzeile, über Vorzeichen z.B.
+	- [ ] Tonart in erstem Takt
 	- [ ] dafür dann Basslinie für Informationen über einzelne Opern
 	- [ ] Notenzwischenräume nutzen
 	- [ ] Ideen:  
