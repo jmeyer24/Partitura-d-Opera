@@ -99,9 +99,7 @@ function getInformation(data, dataKey, unique = false, sortByNum = false) {
   if (dataKey == "") {
     return data;
   } else {
-    data.forEach(function (singleData) {
-      list.push(singleData[dataKey]);
-    });
+    data.forEach((singleData) => list.push(singleData[dataKey]));
   }
 
   if (unique) {
