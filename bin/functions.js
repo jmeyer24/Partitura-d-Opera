@@ -94,7 +94,7 @@ function createPairs(list1, list2) {
 // ==============================================================
 // Helper function to get information list from shows
 // ==============================================================
-function getInformation(data, dataKey, unique = false, sortByNum = false) {
+function getInformation(data, dataKey, unique = false, sortByNum = false, sortByData = data) {
   var list = [];
   if (dataKey == "") {
     return data;
@@ -106,8 +106,8 @@ function getInformation(data, dataKey, unique = false, sortByNum = false) {
     if (sortByNum) {
       list = [...new Set(list)].sort((a, b) => {
         return (
-          data.filter((singleData) => singleData[dataKey] === b).length -
-          data.filter((singleData) => singleData[dataKey] === a).length
+          sortByData.filter((singleData) => singleData[dataKey] === b).length -
+          sortByData.filter((singleData) => singleData[dataKey] === a).length
         );
       });
     } else {

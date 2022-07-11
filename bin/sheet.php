@@ -52,7 +52,6 @@ $json_data = str_replace("'", " ", $json_data);
 		<div id="output" class="output"></div>
 		<script type="module" src="functions.js"></script>
 		<script type="module" src="draw.js"></script>
-		<!--script type="module" src="sheet.js"></script-->
 		<script type="module" src="main.js"></script>
 	</body>
 </html>

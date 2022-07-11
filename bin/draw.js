@@ -16,6 +16,7 @@ const {
   Dot,
   Formatter,
   Fraction,
+  KeySignature,
   Modifier,
   Renderer,
   Stave,
@@ -41,9 +42,12 @@ const DATANUMCOMPOSERS = 10;
 // flag constants
 // ========================================================================
 
-const FLAGHEIGHT = 10;
-const FLAGWIDTH = 35;
-const FLAGTOPOFFSET = 74;
+const FLAGWIDTH = 30;
+const FLAGHEIGHT = 3/4 * FLAGWIDTH;
+const FLAGLEFTOFFSET = 93;
+const FLAGTOPOFFSET = 39;
+const FLAGBETWEEN = 25;
+// const FLAGTOPOFFSET = 74;
 
 // ========================================================================
 // option bools (config)
@@ -63,17 +67,21 @@ const INVERSECOLORS = false;
 // ========================================================================
 // constants
 // ========================================================================
-const SHEETWIDTH = 8000;
+const SHEETWIDTH = 15000;
 const STARTX = 180;
 const STARTY = 50;
 const STAVEWIDTH = SHEETWIDTH - 1.5 * STARTX;
 const STAVEDISTANCE = 100;
-const FIRSTBARWIDTH = 135;
+const FIRSTBARWIDTH = 10 * FLAGBETWEEN + 100; // 380;
 const BARWIDTH = (STAVEWIDTH - FIRSTBARWIDTH) / DATAOVERALLTIMESPAN;
 
 const SHEETHEIGHT = GRANDSTAFF
   ? 2 * (DATANUMCOMPOSERS * STAVEDISTANCE + STARTY)
   : DATANUMCOMPOSERS * STAVEDISTANCE + 2 * STARTY;
+
+const IMAGESIZE = 50;
+const BIRTHDEATHFONTSIZE = 12;
+
 
 // ========================================================================
 // aesthetics
@@ -87,7 +95,8 @@ let librettistDurationMap = [2, 4, 8, 16].reverse(); // [8, 16, 32, 64].reverse(
 
 // there are at max 6 different countries for one composer
 // such that more frequent countries are in the middle of the stave
-let countryNoteMap = ["b/4", "d/5", "g/4", "f/5", "e/4"];
+// let countryNoteMap = ["b/4", "d/5", "g/4", "f/5", "e/4"];
+let countryNoteMap = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"];
 // order seen from ascending order e,g,b,d,f or notes
 let countryNoteMapIndices = [2, 3, 1, 4, 0];
 
@@ -177,7 +186,7 @@ function drawComposer(c) {
   var years = getInformation(shows, "performance_year", true);
   years = years.map(Number).sort();
   let timespan = Math.max(...years) - Math.min(...years) + 1;
-  var countries = getInformation(shows, "country", true);
+  var countries = getInformation(shows, "country", true, true, dataset);
   var librettists = getInformation(shows, "librettist", true);
   var operas = getInformation(shows, "title", true);
 
@@ -223,8 +232,6 @@ function drawComposer(c) {
     output.className = "output";
   }
 
-  stave.draw();
-
   let conn_single;
   let conn_double;
   let conn_brace;
@@ -234,7 +241,6 @@ function drawComposer(c) {
       .addTimeSignature(years.length + "/" + timespan)
       .addClef("bass")
       .setContext(context)
-      .draw();
 
     // draw left-side brace and name
     conn_brace = new StaveConnector(stave, stave2);
@@ -248,6 +254,42 @@ function drawComposer(c) {
     stave2 = stave;
   }
 
+  // // draw key signature
+  // const MAJOR_KEYS = [
+  //   'C', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#',
+  // ];
+  // const MINOR_KEYS = [
+  //   'Am', 'Dm', 'Gm', 'Cm', 'Fm', 'Bbm', 'Ebm', 'Abm', 'Em', 'Bm', 'F#m', 'C#m', 'G#m', 'D#m', 'A#m',
+  // ];
+  // // let i = countries.length;
+  // stave.addKeySignature(MAJOR_KEYS[5 + 7]);
+  // stave.addKeySignature(MAJOR_KEYS[5 + 7]);
+  // stave2.addKeySignature(MAJOR_KEYS[5 + 7]);
+  // stave2.addKeySignature(MAJOR_KEYS[5 + 7]);
+
+  // get name element
+  let els = Array.from(
+    document.getElementsByTagNameNS("http://www.w3.org/2000/svg", "text")
+  );
+  let el = els.find((e) => e.innerHTML == lastName);
+
+  // write birth and death year
+  let birthDeath = el.cloneNode(false);
+  el.parentElement.appendChild(birthDeath);
+  birthDeath.innerHTML = birthYears[lastName] + " - " + deathYears[lastName];
+  birthDeath.setAttribute("font-size", BIRTHDEATHFONTSIZE + "px");
+  birthDeath.setAttribute("x", +el.getAttribute("x") + (el.textLength.baseVal.value - birthDeath.textLength.baseVal.value) / 2);
+  birthDeath.setAttribute("y", +el.getAttribute("y") + BIRTHDEATHFONTSIZE);
+
+  // draw composer image
+  var composerImage = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+  el.parentElement.append(composerImage);
+  composerImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', "img/composers/" + lastName + ".png");
+  composerImage.setAttribute("class", "composer");
+  composerImage.setAttribute("x", +el.getAttribute("x") + (el.textLength.baseVal.value - IMAGESIZE) / 2);
+  composerImage.setAttribute("y", +el.getAttribute("y") - parseInt(el.getAttribute("font-size")) - IMAGESIZE);
+
+  // draw the connectors
   if (PARTITURE) {
     if (c == 0) {
       firstStave = stave;
@@ -282,87 +324,35 @@ function drawComposer(c) {
     conn_double.setType(StaveConnector.type.DOUBLE).setContext(context).draw();
   }
 
-  // get name element
-  let els = Array.from(
-    document.getElementsByTagNameNS("http://www.w3.org/2000/svg", "text")
-  );
-  let el = els.find((e) => e.innerHTML == lastName);
-
-  // write birth and death year
-  let birthDeath = el.cloneNode(false);
-  birthDeath.innerHTML = birthYears[lastName] + " - " + deathYears[lastName];
-  birthDeath.setAttribute("y", +el.getAttribute("y") + 20);
-  birthDeath.setAttribute("font-size", "12px");
-  el.parentElement.appendChild(birthDeath);
-
-  // draw composer image
-  let img = document.createElement("img");
-  img.setAttribute("src", "img/composers/" + lastName + ".png");
-  let style =
-    "top: " +
-    (stave.getY() + 30) +
-    "px; " +
-    "left: " +
-    (stave.getX() - 80) +
-    "px;";
-  img.setAttribute("style", style);
-  img.setAttribute("class", "composer");
-  document.body.appendChild(img);
-
-  // draw the country flags as key signs at start of stave
-  var isTop = (i) => !(i % 2);
+  // draw the country flags in descending order
   for (let i = 0; i < allCountries.length; i++) {
-    let country = allCountries[i];
-    if (countries.includes(country)) {
-      let flag = document.createElement("img");
-      flag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-      let style = "left: " + (stave.getX() - FLAGWIDTH / 2) + "px; top: ";
-      if (isTop(i)) {
-        style +=
-          stave.getY() +
-          FLAGTOPOFFSET -
-          countryNoteMapIndices[i / 2] * FLAGHEIGHT;
-      } else {
-        style +=
-          stave2.getY() +
-          FLAGTOPOFFSET -
-          countryNoteMapIndices[(i - 1) / 2] * FLAGHEIGHT;
-      }
+    if (countries.includes(allCountries[i])) {
+      var flagImage = document.createElement('img');
+      document.body.appendChild(flagImage);
+      let style = "left: " + (stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2) + "px; top: ";
+      style += stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2;
       style += "px; height: " + FLAGHEIGHT + "px; width: " + FLAGWIDTH + "px;";
-      flag.setAttribute("style", style);
-      flag.setAttribute("class", "flag");
-      document.body.appendChild(flag);
+      flagImage.setAttribute("style", style);
+      flagImage.setAttribute("class", "flag");
+      flagImage.setAttribute("src", "./img/flags/" + allCountries[i] + "-flag.jpg");
     }
   }
+
+  // draw the first stave now
+  stave.draw();
+  stave2.draw();
 
   // ==============================================================
   // Draw a bar for each year
   // ==============================================================
+  const drawYearFilled = y => drawYear(c, y, years, timespan, shows, operas, allCountries, allLibrettists);
   if (SHOWFULLTIMELINE) {
     for (let y = 0; y < DATAOVERALLTIMESPAN; y++) {
-      drawYear(
-        c,
-        y,
-        years,
-        timespan,
-        shows,
-        operas,
-        allCountries,
-        allLibrettists
-      );
+      drawYearFilled(y);
     }
   } else {
     for (let y = 0; y < timespan; y++) {
-      drawYear(
-        c,
-        y,
-        years,
-        timespan,
-        shows,
-        operas,
-        allCountries,
-        allLibrettists
-      );
+      drawYearFilled(y);
     }
   }
 }
@@ -400,10 +390,10 @@ function drawYear(
     .sort((a, b) => {
       var helper = (x) =>
         librettistDurationMap[
-          Math.floor(
-            allLibrettists.findIndex((element) => element === x["librettist"]) /
-              2
-          )
+        Math.floor(
+          allLibrettists.findIndex((element) => element === x["librettist"]) /
+          2
+        )
         ];
       var al = helper(a);
       var bl = helper(b);
@@ -476,7 +466,8 @@ function drawYear(
   var notes2 = [];
   var isTop = (i) => !(i % 2);
 
-  // // draw the country flags as key signs at start of stave
+  // TODO: delete when correctly done
+  // // draw flags onto the staves 
   // var countries = getInformation(shows, "country", true);
   // if (y == 0 || y == timespan - 1 || fullYearList[y] % 5 == 0) {
   //   for (let i = 0; i < allCountries.length; i++) {
@@ -511,41 +502,32 @@ function drawYear(
   let keys = showsInYear.map(
     (show) =>
       countryNoteMap[
-        Math.floor(
-          allCountries.findIndex((element) => element === show["country"]) / 2
-        )
+      allCountries.findIndex((element) => element === show["country"])
       ]
   );
   // librettists sorted by frequency
   let durations = showsInYear.map(
     (show) =>
       librettistDurationMap[
-        Math.floor(
-          allLibrettists.findIndex(
-            (element) => element === show["librettist"]
-          ) / 2
-        )
+      Math.floor(
+        allLibrettists.findIndex(
+          (element) => element === show["librettist"]
+        ) / 2
+      )
       ]
   );
   // every 2nd librettist has a dotted note
   let dots = showsInYear.map(
     (show) =>
       [false, true][
-        allLibrettists.findIndex((element) => element === show["librettist"]) %
-          2
+      allLibrettists.findIndex((element) => element === show["librettist"]) %
+      2
       ]
   );
 
   // get all the notes
   // number of notes per composer is all their operas
-  let order = [];
-  let countStave = 0;
-  let countStave2 = 0;
   for (let s = 0; s < showsInYear.length; s++) {
-    let countryIndex = allCountries.findIndex(
-      (element) => element === showsInYear[s]["country"]
-    );
-
     var note = new StaveNote({
       keys: [keys[s]],
       duration: [durations[s]],
@@ -554,13 +536,7 @@ function drawYear(
       Dot.buildAndAttach([note], { all: true });
     }
 
-    if (isTop(countryIndex)) {
-      notes.push(note);
-      order.push([0, countStave++]);
-    } else {
-      notes2.push(note);
-      order.push([1, countStave2++]);
-    }
+    notes.push(note);
   }
 
   // fill the bar with a full rest
@@ -590,7 +566,7 @@ function drawYear(
   // Add tooltips
   for (let s = 0; s < showsInYear.length; s++) {
     let show = showsInYear[s];
-    let note = !order[s][0] ? notes[order[s][1]] : notes2[order[s][1]];
+    let note = notes[s];
     let title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.innerHTML =
       "Titel: " +

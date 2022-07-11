@@ -37,21 +37,17 @@ body::-webkit-scrollbar {
 
 .flag {
   position: absolute;
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 40%,
-    black 60%,
-    transparent
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 40%,
-    black 60%,
-    transparent
-  );
   border: 1px solid black;
+  /* -webkit-mask-image: linear-gradient(to right,
+      transparent,
+      black 40%,
+      black 60%,
+      transparent);
+  mask-image: linear-gradient(to right,
+      transparent,
+      black 40%,
+      black 60%,
+      transparent); */
 }
 
 .composer {
