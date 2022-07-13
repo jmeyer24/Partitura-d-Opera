@@ -111,7 +111,7 @@ let librettistDurationMap = [2, 4, 8, 16].reverse(); // [8, 16, 32, 64].reverse(
 // by latitude of country (when sorted by frequency in allCountries)
 let DESCENDINGFLAGS = false;
 let noteList = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"];
-let countryNoteOrder = [8, 3, 7, 0, 5, 2, 6, 1, 4, 9]; // ['Italien', 'Deutschland', 'Oesterreich', 'Russland', 'Frankreich', 'Polen', 'Tschechien', 'England', 'Niederlande', 'Malta'] 
+let countryNoteOrder = [8, 2, 7, 0, 5, 3, 6, 1, 4, 9]; // ['Italien', 'Deutschland', 'Oesterreich', 'Russland', 'Frankreich', 'Polen', 'Tschechien', 'England', 'Niederlande', 'Malta'] 
 
 let countryNoteMap = countryNoteOrder.map((note) => noteList[note]);
 
