@@ -35,6 +35,11 @@ body::-webkit-scrollbar {
   background-color: black;
 }
 
+title {
+  fill: blue;
+  stroke: red;
+}
+
 .flag {
   position: absolute;
   border: 1px solid black;
@@ -48,6 +53,11 @@ body::-webkit-scrollbar {
       black 40%,
       black 60%,
       transparent); */
+}
+
+.no-flag {
+  position: absolute;
+  border: 1px dotted silver;
 }
 
 .composer {

@@ -51,6 +51,7 @@ const FLAGHEIGHT = 3 / 4 * FLAGWIDTH;
 const FLAGLEFTOFFSET = 93;
 const FLAGTOPOFFSET = 39;
 const FLAGBETWEEN = 25;
+const LINEBETWEEN = 5;
 // const FLAGTOPOFFSET = 74;
 
 // ========================================================================
@@ -101,8 +102,9 @@ let librettistDurationMap = [2, 4, 8, 16].reverse(); // [8, 16, 32, 64].reverse(
 
 // there are at max 6 different countries for one composer
 // such that more frequent countries are in the middle of the stave
-let countryNoteMap = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"];
-// order seen from ascending order e,g,b,d,f or notes
+let noteList = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"].reverse();
+let countryNoteOrder = [4, 5, 3, 6, 2, 7, 1, 8, 0, 9];
+let countryNoteMap = countryNoteOrder.map((note) => noteList[note]);
 
 let birthYears = {
   Anfossi: 1727,
@@ -303,12 +305,27 @@ function drawComposer(c) {
     .appendTo(el.parent());
 
   // ==============================================================
-  // Draw the country flags in descending order
+  // Draw the country flags in the order given by countryNoteOrder
   // ==============================================================
 
   for (let i = 0; i < allCountries.length; i++) {
+    // create one empty flag element
+    if (!countries.includes(allCountries[i])) {
+      let j = 9 - countryNoteOrder[i];
+      $(document.createElement("img"))
+        .addClass("no-flag")
+        .css({
+          "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+          "top": stave.getY() + FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
+          "height": FLAGHEIGHT,
+          "width": FLAGWIDTH
+        })
+        .appendTo("body");
+    }
+  for (let i = 0; i < allCountries.length; i++) {
+    // create one flag element
     if (countries.includes(allCountries[i])) {
-      // one flag image element
+      let j = 9 - countryNoteOrder[i];
       $(document.createElement("img"))
         .addClass("flag")
         .attr({
@@ -316,26 +333,28 @@ function drawComposer(c) {
         })
         .css({
           "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
-          "top": stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2,
+          "top": stave.getY() + FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
           "height": FLAGHEIGHT,
           "width": FLAGWIDTH
         })
         .appendTo("body");
-    // // TODO: make this work so the images are in relation to the stave in the DOM?
-    //   $(document.createElementNS("http://www.w3.org/2000/svg", "image"))
-    //     .addClass("flag")
-    //     .attr({
-    //       "href": "./img/flags/" + allCountries[i] + "-flag.jpg",
-    //       "x": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
-    //       "y": stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2,
-    //     })
-    //     .css({
-    //       "height": FLAGHEIGHT,
-    //       "width": FLAGWIDTH
-    //     })
-    //     .appendTo(el.parent());
     }
   }
+  }
+  // // TODO: make this work so the images are in relation to the stave in the DOM?
+  //   $(document.createElementNS("http://www.w3.org/2000/svg", "image"))
+  //     .addClass("flag")
+  //     .attr({
+  //       "href": "./img/flags/" + allCountries[i] + "-flag.jpg",
+  //       "x": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+  //       "y": stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2,
+  //     })
+  //     .css({
+  //       "height": FLAGHEIGHT,
+  //       "width": FLAGWIDTH
+  //     })
+  //     .appendTo(el.parent());
+  // }
 
   // ==============================================================
   // Draw the connectors
@@ -578,22 +597,6 @@ function drawYear(
   });
 
   // ========================================================================
-  // Add tooltips for each note
-  // ========================================================================
-
-  for (let s = 0; s < showsInYear.length; s++) {
-    let show = showsInYear[s];
-    // set text of tooltip for the current node
-    $(document.createElementNS("http://www.w3.org/2000/svg", "title"))
-      .html(
-        "Titel: " + show["title"] +
-        "\nLibrettist: " + show["librettist"] +
-        "\nOrt: " + show["placename"]
-      )
-      .appendTo(notes[s].attrs.el);
-  }
-
-  // ========================================================================
   // Finally: Draw the stave and format stave with notes
   // ========================================================================
 
@@ -612,6 +615,23 @@ function drawYear(
   // beams2.forEach(function (beam) {
   //   beam.setContext(context).draw();
   // });
+
+  // ========================================================================
+  // Add tooltips for each note
+  // ========================================================================
+
+  // TODO repair this function...
+  for (let s = 0; s < showsInYear.length; s++) {
+    let show = showsInYear[s];
+    // set text of tooltip for the current node
+    $(document.createElementNS("http://www.w3.org/2000/svg", "title"))
+      .html(
+        "Titel: " + show["title"] +
+        "\nLibrettist: " + show["librettist"] +
+        "\nOrt: " + show["placename"]
+      )
+      .appendTo(notes[s].attrs.el);
+  }
 }
 
 export { drawPartiture };
