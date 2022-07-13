@@ -153,7 +153,7 @@ Image resources:
 - [ ] Neues Thema (Boromir's Theme) für verschiedene Epochen
 - [x] Entscheiden, ob Flaggen 1 mal oder öfters  
 	1 mal im ersten Takt
-- [ ] Vielleicht: Flaggen sortieren nach Höhen-/Breitengrad
+- [x] Vielleicht: Flaggen sortieren nach Höhen-/Breitengrad
 
 ### Bugfixing
 
