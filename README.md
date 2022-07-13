@@ -94,17 +94,19 @@ Image resources:
 - [x] Hintergrund altes Notenpapier
 - [x] Komponisten
   - [x] Bilder zuschneiden
-  - [ ] besser positionieren
+  - [x] besser positionieren
   - [x] Geburts-/Sterbedatum
     - [ ] in Takten als Symbole
 - [x] Flaggen
   - [x] zugeordnet zu Notenlinie/Land
-  - [x] funktioniert auch mit Option GRANDSTAFF
+  - [x] als Taktart im ersten Takt
+  - [x] ~~funktioniert auch mit Option GRANDSTAFF~~
+  - [x] funktioniert nur mit Option GRANDSTAFF
   - [x] ~~neben Notenlinie~~
-  - [x] über Taktlinie
-  - [x] Filter-Effekt
-  - [x] alle 5 jahre
-  - [ ] zusätzlich pro Jahr als vertikaler Hintergrund
+  - [x] ~~über Taktlinie~~
+  - [x] ~~Filter-Effekt~~
+  - [x] ~~alle 5 jahre~~
+  - [ ] ~~zusätzlich pro Jahr als vertikaler Hintergrund~~
 - [ ] Ortsnamen
 - [x] Seite scrollbar machen
 - [x] Sonderzeichen wie ì oder í richtig darstellen ("i mit Akut")
@@ -112,6 +114,7 @@ Image resources:
 - [x] Grandstaff mit Flaggen, sodass jeder Linie eine Flagge zugeordnet wird
   - [x] Länder nach Anzahl der Opern sortiert
 - [x] Pausenzeichen für Takte ohne Noten
+- [ ] Tooltips schöner machen
 
 ### Optional
 
@@ -121,7 +124,7 @@ Image resources:
 - [ ] Komponistennamen Font handgeschriebener Stil
 - [ ] ~~zwei Komponisten, die nebeneinander passen (z.B. Anfossi/Mayr) in eine Zeile packen~~
 - [ ] einzelne Takte so mit Pausen auffüllen, dass ein musikalisch korrekter Takt entsteht
-- [ ] Konnektoren über alle Notenzeilen hinweg
+- [ ] ~~Konnektoren über alle Notenzeilen hinweg~~
 - [ ] Option für A4 Format
 - [ ] Anzahl der verschiedenen(!) Orte in einem Land:  
  Zahl hinter Flagge &harr; irgendwie farblich
@@ -137,17 +140,19 @@ Image resources:
   - [x] punktierte Noten
   - [x] sortiert nach Häufigkeit
   - [ ] ~~Notenhals nach oben oder unten~~
-- [ ] alle Flaggen/Länder in eine Notenzeile, über Vorzeichen z.B.
-  - [ ] Tonart in erstem Takt
+- [x] alle Flaggen/Länder in eine Notenzeile, über Vorzeichen z.B.
+  - [x] Tonart in erstem Takt
   - [ ] dafür dann Basslinie für Informationen über einzelne Opern
-  - [ ] Notenzwischenräume nutzen
+  - [x] Notenzwischenräume nutzen
   - [ ] Ideen:  
  eine Oktave hat 8 Noten oder  
  mit Vorzeichen eine Klaviertastatur hinmalen (weiße und schwarze Tasten)
 - [ ] Artikulationen über Noten für:
-  - [ ] ersten Opernauftritt
+  - [ ] ~~ersten Opernauftritt~~
+  - [ ] alle außer ersten Opernauftritt mit Zahl über Notenkopf
 - [ ] Neues Thema (Boromir's Theme) für verschiedene Epochen
-- [ ] Entscheiden, ob Flaggen 1 mal oder öfters
+- [x] Entscheiden, ob Flaggen 1 mal oder öfters  
+	1 mal im ersten Takt
 - [ ] Vielleicht: Flaggen sortieren nach Höhen-/Breitengrad
 
 ### Bugfixing

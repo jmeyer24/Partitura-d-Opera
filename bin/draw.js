@@ -102,8 +102,17 @@ let librettistDurationMap = [2, 4, 8, 16].reverse(); // [8, 16, 32, 64].reverse(
 
 // there are at max 6 different countries for one composer
 // such that more frequent countries are in the middle of the stave
-let noteList = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"].reverse();
-let countryNoteOrder = [4, 5, 3, 6, 2, 7, 1, 8, 0, 9];
+
+// by frequency from middle to rural lines
+// let DESCENDINGFLAGS = true;
+// let noteList = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"].reverse();
+// let countryNoteOrder = [4, 5, 3, 6, 2, 7, 1, 8, 0, 9]; 
+
+// by latitude of country (when sorted by frequency in allCountries)
+let DESCENDINGFLAGS = false;
+let noteList = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"];
+let countryNoteOrder = [8, 3, 7, 0, 5, 2, 6, 1, 4, 9]; // ['Italien', 'Deutschland', 'Oesterreich', 'Russland', 'Frankreich', 'Polen', 'Tschechien', 'England', 'Niederlande', 'Malta'] 
+
 let countryNoteMap = countryNoteOrder.map((note) => noteList[note]);
 
 let birthYears = {
@@ -313,7 +322,12 @@ function drawComposer(c) {
     for (let i = 0; i < allCountries.length; i++) {
       // create one empty flag element
       if (boolInclude == countries.includes(allCountries[i])) {
-        let j = 9 - countryNoteOrder[i];
+        let j;
+        if (DESCENDINGFLAGS) {
+          j = 9 - countryNoteOrder[i];
+        } else {
+          j = countryNoteOrder[i];
+        }
         flag = $(document.createElement("img"));
         flag
           .addClass(className)
