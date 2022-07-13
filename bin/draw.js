@@ -1,6 +1,7 @@
 // ========================================================================
-// import helper functions
+// Import helper functions
 // ========================================================================
+
 import {
   getSortIndices,
   getLastName,
@@ -9,8 +10,9 @@ import {
 } from "./functions.js";
 
 // ========================================================================
-// vexflow import/setup
+// Vexflow import/setup
 // ========================================================================
+
 const {
   Beam,
   Dot,
@@ -27,31 +29,34 @@ const {
 } = Vex.Flow;
 
 // ========================================================================
-// use a font that looks handwritten
+// Use a font that looks handwritten
 // ========================================================================
+
 Vex.Flow.setMusicFont("Petaluma");
 
 // ========================================================================
-// opera data constants
+// Opera data constants
 // ========================================================================
+
 const STARTYEAR = 1775;
 const DATAOVERALLTIMESPAN = 59; // 59 years between 1775 and 1833
 const DATANUMCOMPOSERS = 10;
 
 // ========================================================================
-// flag constants
+// Flag constants
 // ========================================================================
 
 const FLAGWIDTH = 30;
-const FLAGHEIGHT = 3/4 * FLAGWIDTH;
+const FLAGHEIGHT = 3 / 4 * FLAGWIDTH;
 const FLAGLEFTOFFSET = 93;
 const FLAGTOPOFFSET = 39;
 const FLAGBETWEEN = 25;
 // const FLAGTOPOFFSET = 74;
 
 // ========================================================================
-// option bools (config)
+// Option bools (config)
 // ========================================================================
+
 const ASCENDINGDURATIONS = false;
 const PARTITURE = false;
 let FITTIMELINE = true;
@@ -65,8 +70,9 @@ const GRANDSTAFF = true;
 const INVERSECOLORS = false;
 
 // ========================================================================
-// constants
+// Constants
 // ========================================================================
+
 const SHEETWIDTH = 15000;
 const STARTX = 180;
 const STARTY = 50;
@@ -82,10 +88,10 @@ const SHEETHEIGHT = GRANDSTAFF
 const IMAGESIZE = 50;
 const BIRTHDEATHFONTSIZE = 12;
 
+// ========================================================================
+// Aesthetics
+// ========================================================================
 
-// ========================================================================
-// aesthetics
-// ========================================================================
 // there are at max 4 librettists for one componist
 // there are 8 librettists total
 // make dotted notes to show all
@@ -95,10 +101,8 @@ let librettistDurationMap = [2, 4, 8, 16].reverse(); // [8, 16, 32, 64].reverse(
 
 // there are at max 6 different countries for one composer
 // such that more frequent countries are in the middle of the stave
-// let countryNoteMap = ["b/4", "d/5", "g/4", "f/5", "e/4"];
 let countryNoteMap = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"];
 // order seen from ascending order e,g,b,d,f or notes
-let countryNoteMapIndices = [2, 3, 1, 4, 0];
 
 let birthYears = {
   Anfossi: 1727,
@@ -132,11 +136,11 @@ const NONMARKCOLOR = "black";
 const RESTCOLOR = "silver";
 
 // ========================================================================
-// variables
+// Variables
 // ========================================================================
 
-let stave = null;
-let stave2 = null;
+var stave = null;
+var stave2 = null;
 let firstStave = null;
 let lastStave = null;
 let firstStaves = [];
@@ -151,18 +155,20 @@ const REST = new StaveNote({
 // ========================================================================
 // Create an SVG renderer and attach it to the DIV element named "output".
 // ========================================================================
-const output = document.getElementById("output");
-const renderer = new Renderer(output, Renderer.Backends.SVG);
+
+const renderer = new Renderer($("#output")[0], Renderer.Backends.SVG);
 renderer.resize(SHEETWIDTH, SHEETHEIGHT);
 
 // ========================================================================
 // Configure the rendering context.
 // ========================================================================
+
 const context = renderer.getContext();
 
 // ========================================================================
 // Draw the partiture
 // ========================================================================
+
 function drawPartiture() {
   context.clear();
 
@@ -173,9 +179,11 @@ function drawPartiture() {
 }
 
 function drawComposer(c) {
+
   // ========================================================================
   // Datafiltering
   // ========================================================================
+
   // get all librettist a composer worked with, his operas, countries and years his shows were performed in
   var allCountries = getInformation(dataset, "country", true, true);
   var allLibrettists = getInformation(dataset, "librettist", true, true);
@@ -189,8 +197,14 @@ function drawComposer(c) {
   var countries = getInformation(shows, "country", true, true, dataset);
   var librettists = getInformation(shows, "librettist", true);
   var operas = getInformation(shows, "title", true);
+  let conn_single;
+  let conn_double;
+  let conn_brace;
 
-  // draw the first bars of the stave
+  // ==============================================================
+  // Create the first bars of the stave
+  // ==============================================================
+
   let setFirstStaveAtX;
   if (FITTIMELINE) {
     setFirstStaveAtX = years[0] - STARTYEAR;
@@ -198,29 +212,32 @@ function drawComposer(c) {
     setFirstStaveAtX = 0;
   }
   if (GRANDSTAFF) {
-    var stave = new Stave(
+    stave = new Stave(
       STARTX + setFirstStaveAtX * BARWIDTH,
       STARTY + 2 * c * STAVEDISTANCE,
       FIRSTBARWIDTH
     );
-    var stave2 = new Stave(
+    stave2 = new Stave(
       STARTX + setFirstStaveAtX * BARWIDTH,
       STARTY + (2 * c + 1) * STAVEDISTANCE,
       FIRSTBARWIDTH
     );
   } else {
-    var stave = new Stave(
+    stave = new Stave(
       STARTX + setFirstStaveAtX * BARWIDTH,
       STARTY + c * STAVEDISTANCE,
       FIRSTBARWIDTH
     );
-    stave.setText(lastName, Modifier.Position.LEFT);
   }
 
   stave
     .addTimeSignature(operas.length + "/" + librettists.length)
     .addClef("treble")
     .setContext(context);
+
+  // ==============================================================
+  // Enable color inversion
+  // ==============================================================
 
   if (INVERSECOLORS) {
     stave.context.setStrokeStyle("white");
@@ -232,9 +249,9 @@ function drawComposer(c) {
     output.className = "output";
   }
 
-  let conn_single;
-  let conn_double;
-  let conn_brace;
+  // ==============================================================
+  // Draw left-side brace and name
+  // ==============================================================
 
   if (GRANDSTAFF) {
     stave2
@@ -242,7 +259,6 @@ function drawComposer(c) {
       .addClef("bass")
       .setContext(context)
 
-    // draw left-side brace and name
     conn_brace = new StaveConnector(stave, stave2);
     conn_brace
       .setType(StaveConnector.type.BRACE)
@@ -254,42 +270,42 @@ function drawComposer(c) {
     stave2 = stave;
   }
 
-  // // draw key signature
-  // const MAJOR_KEYS = [
-  //   'C', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#',
-  // ];
-  // const MINOR_KEYS = [
-  //   'Am', 'Dm', 'Gm', 'Cm', 'Fm', 'Bbm', 'Ebm', 'Abm', 'Em', 'Bm', 'F#m', 'C#m', 'G#m', 'D#m', 'A#m',
-  // ];
-  // // let i = countries.length;
-  // stave.addKeySignature(MAJOR_KEYS[5 + 7]);
-  // stave.addKeySignature(MAJOR_KEYS[5 + 7]);
-  // stave2.addKeySignature(MAJOR_KEYS[5 + 7]);
-  // stave2.addKeySignature(MAJOR_KEYS[5 + 7]);
+  // ==============================================================
+  // Refine stave annotation with image and years
+  // ==============================================================
 
-  // get name element
-  let els = Array.from(
-    document.getElementsByTagNameNS("http://www.w3.org/2000/svg", "text")
-  );
-  let el = els.find((e) => e.innerHTML == lastName);
+  // get text element with composer name
+  let el = $(document)
+    .find("text:contains('" + lastName + "')")
+  // TODO: why isnt this working?
+  // el.wrap("<g class='stave-annotation' id='annotation-" + lastName + "'></g>");
 
   // write birth and death year
-  let birthDeath = el.cloneNode(false);
-  el.parentElement.appendChild(birthDeath);
-  birthDeath.innerHTML = birthYears[lastName] + " - " + deathYears[lastName];
-  birthDeath.setAttribute("font-size", BIRTHDEATHFONTSIZE + "px");
-  birthDeath.setAttribute("x", +el.getAttribute("x") + (el.textLength.baseVal.value - birthDeath.textLength.baseVal.value) / 2);
-  birthDeath.setAttribute("y", +el.getAttribute("y") + BIRTHDEATHFONTSIZE);
+  let birthDeath = el
+    .clone()
+    .appendTo(el.parent())
+    .html(birthYears[lastName] + " - " + deathYears[lastName])
+    .css("font-size", BIRTHDEATHFONTSIZE);
+  birthDeath
+    .attr({
+      "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
+      "y": + el.attr("y") + BIRTHDEATHFONTSIZE
+    });
 
   // draw composer image
-  var composerImage = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-  el.parentElement.append(composerImage);
-  composerImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', "img/composers/" + lastName + ".png");
-  composerImage.setAttribute("class", "composer");
-  composerImage.setAttribute("x", +el.getAttribute("x") + (el.textLength.baseVal.value - IMAGESIZE) / 2);
-  composerImage.setAttribute("y", +el.getAttribute("y") - parseInt(el.getAttribute("font-size")) - IMAGESIZE);
+  $(document.createElementNS('http://www.w3.org/2000/svg', 'image'))
+    .appendTo(el.parent())
+    .addClass("composer")
+    .attr({
+      'href' : "img/composers/" + lastName + ".png",
+      "x" : + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
+      "y" : + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE
+    });
 
-  // draw the connectors
+  // ==============================================================
+  // Draw the connectors
+  // ==============================================================
+
   if (PARTITURE) {
     if (c == 0) {
       firstStave = stave;
@@ -324,21 +340,29 @@ function drawComposer(c) {
     conn_double.setType(StaveConnector.type.DOUBLE).setContext(context).draw();
   }
 
-  // draw the country flags in descending order
+  // ==============================================================
+  // Draw the country flags in descending order
+  // ==============================================================
+
   for (let i = 0; i < allCountries.length; i++) {
     if (countries.includes(allCountries[i])) {
-      var flagImage = document.createElement('img');
-      document.body.appendChild(flagImage);
-      let style = "left: " + (stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2) + "px; top: ";
-      style += stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2;
-      style += "px; height: " + FLAGHEIGHT + "px; width: " + FLAGWIDTH + "px;";
-      flagImage.setAttribute("style", style);
-      flagImage.setAttribute("class", "flag");
-      flagImage.setAttribute("src", "./img/flags/" + allCountries[i] + "-flag.jpg");
+      // one flag image element
+      $(document.createElement("img"))
+        .appendTo("body")
+        .addClass("flag")
+        .attr("src", "./img/flags/" + allCountries[i] + "-flag.jpg")
+        .css({
+          "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+          "top": stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2,
+          "height": FLAGHEIGHT,
+          "width": FLAGWIDTH
+        })
     }
   }
 
-  // draw the first stave now
+  // ==============================================================
+  // Finally: Draw the first stave
+  // ==============================================================
   stave.draw();
   stave2.draw();
 
@@ -367,7 +391,14 @@ function drawYear(
   allCountries,
   allLibrettists
 ) {
-  // get all shows in that year
+
+  // ========================================================================
+  // Datafiltering
+  // ========================================================================
+
+  let conn_single;
+  var notes = [];
+  var notes2 = [];
   // TODO put that where the staves are created!!!
   let fullYearList;
   if (SHOWFULLTIMELINE) {
@@ -378,7 +409,6 @@ function drawYear(
   } else {
     fullYearList = Array.from(new Array(timespan), (x, i) => i + years[0]);
   }
-
   let showsInYear = shows
     // filter the shows in the current year
     .filter(
@@ -404,7 +434,10 @@ function drawYear(
       }
     });
 
-  // draw the bar of the current year
+  // ========================================================================
+  // Create the bar of the current year
+  // ========================================================================
+
   let startXAfterFirst;
   if (FITTIMELINE) {
     startXAfterFirst =
@@ -417,25 +450,26 @@ function drawYear(
     startXAfterFirst + (y * (STAVEWIDTH - FIRSTBARWIDTH)) / DATAOVERALLTIMESPAN;
   if (GRANDSTAFF) {
     let barY = STARTY + 2 * c * STAVEDISTANCE;
-    var stave = new Stave(barX, barY, BARWIDTH);
-    var stave2 = new Stave(barX, barY + STAVEDISTANCE, BARWIDTH);
+    stave = new Stave(barX, barY, BARWIDTH);
+    stave2 = new Stave(barX, barY + STAVEDISTANCE, BARWIDTH);
     stave2.setContext(context).draw();
   } else {
     let barY = STARTY + c * STAVEDISTANCE;
-    var stave = new Stave(barX, barY, BARWIDTH);
+    stave = new Stave(barX, barY, BARWIDTH);
     stave2 = stave;
   }
 
-  // write the years below the stave
+  // ========================================================================
+  // Write the years as the bar measure
+  // ========================================================================
+
   if (y == 0 || y == timespan - 1 || fullYearList[y] % 5 == 0) {
     stave.setMeasure(fullYearList[y]);
   }
-  stave.setContext(context);
-  stave.context.setStrokeStyle(MARKCOLOR);
-  stave.context.setFillStyle(MARKCOLOR);
-  stave.draw();
 
-  let conn_single;
+  // ==============================================================
+  // Draw the connectors
+  // ==============================================================
 
   if (PARTITURE) {
     if (c == 0) {
@@ -456,47 +490,15 @@ function drawYear(
       .draw();
   }
 
-  // ==============================================================
-  // Draw information as notes and flags for each composer
-  // ==============================================================
+  // TODO use createPairs()
+
+  // ========================================================================
+  // Create all notes of a year
+  // ========================================================================
+
   // represent each show as a note
   // note height by country with flags
   // note length by librettist
-  var notes = [];
-  var notes2 = [];
-  var isTop = (i) => !(i % 2);
-
-  // TODO: delete when correctly done
-  // // draw flags onto the staves 
-  // var countries = getInformation(shows, "country", true);
-  // if (y == 0 || y == timespan - 1 || fullYearList[y] % 5 == 0) {
-  //   for (let i = 0; i < allCountries.length; i++) {
-  //     let country = allCountries[i];
-  //     if (countries.includes(country)) {
-  //       let flag = document.createElement("img");
-  //       flag.setAttribute("src", "img/flags/" + country + "-flag.jpg");
-  //       let style = "left: " + (stave.getX() - FLAGWIDTH / 2) + "px; top: ";
-  //       if (isTop(i)) {
-  //         style +=
-  //           stave.getY() +
-  //           FLAGTOPOFFSET -
-  //           countryNoteMapIndices[i / 2] * FLAGHEIGHT;
-  //       } else {
-  //         style +=
-  //           stave2.getY() +
-  //           FLAGTOPOFFSET -
-  //           countryNoteMapIndices[(i - 1) / 2] * FLAGHEIGHT;
-  //       }
-  //       style +=
-  //         "px; height: " + FLAGHEIGHT + "px; width: " + FLAGWIDTH + "px;";
-  //       flag.setAttribute("style", style);
-  //       flag.setAttribute("class", "flag");
-  //       document.body.appendChild(flag);
-  //     }
-  //   }
-  // }
-
-  // TODO use createPairs()
 
   // note specifics
   let keys = showsInYear.map(
@@ -525,7 +527,6 @@ function drawYear(
       ]
   );
 
-  // get all the notes
   // number of notes per composer is all their operas
   for (let s = 0; s < showsInYear.length; s++) {
     var note = new StaveNote({
@@ -539,13 +540,20 @@ function drawYear(
     notes.push(note);
   }
 
-  // fill the bar with a full rest
+  // ========================================================================
+  // Fill the bar with a rests
+  // ========================================================================
+
   if (notes.length == 0) {
     notes.push(REST);
   }
   if (notes2.length == 0) {
     notes2.push(REST);
   }
+
+  // ========================================================================
+  // Create beams
+  // ========================================================================
 
   // TODO sort and connect the librettists with beams
   var beams = Beam.generateBeams(notes, { stem_direction: 1 });
@@ -554,6 +562,33 @@ function drawYear(
   //   groups: [new Fraction(2, 4)],
   // });
 
+  // ========================================================================
+  // Add tooltips for each note
+  // ========================================================================
+
+  for (let s = 0; s < showsInYear.length; s++) {
+    let show = showsInYear[s];
+    // set text of tooltip for the current node
+    $(document.createElementNS("http://www.w3.org/2000/svg", "title"))
+      .html(
+        "Titel: " + show["title"] +
+        "\nLibrettist: " + show["librettist"] +
+        "\nOrt: " + show["placename"]
+      )
+      .appendTo(notes[s].attrs.el);
+  }
+
+  // ========================================================================
+  // Finally: Draw the stave and format stave with notes
+  // ========================================================================
+
+  // draw the stave
+  stave.setContext(context);
+  stave.context.setStrokeStyle(MARKCOLOR);
+  stave.context.setFillStyle(MARKCOLOR);
+  stave.draw();
+
+  // format stave with notes
   Formatter.FormatAndDraw(context, stave, notes, false);
   Formatter.FormatAndDraw(context, stave2, notes2, false);
   beams.forEach(function (beam) {
@@ -562,21 +597,6 @@ function drawYear(
   beams2.forEach(function (beam) {
     beam.setContext(context).draw();
   });
-
-  // Add tooltips
-  for (let s = 0; s < showsInYear.length; s++) {
-    let show = showsInYear[s];
-    let note = notes[s];
-    let title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-    title.innerHTML =
-      "Titel: " +
-      show["title"] +
-      "\nLibrettist: " +
-      show["librettist"] +
-      "\nOrt: " +
-      show["placename"];
-    note.attrs.el.appendChild(title);
-  }
 }
 
 export { drawPartiture };

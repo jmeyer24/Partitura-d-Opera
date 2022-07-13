@@ -35,7 +35,8 @@ $json_data = str_replace("'", " ", $json_data);
 		<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/symbola" type="text/css"/>
 		<link rel="stylesheet" media="screen" href="sheet.css" type="text/css"/>
 		<script src="https://cdn.jsdelivr.net/npm/vexflow/build/cjs/vexflow.js"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.js"></script>
 		<script src="https://d3js.org/d3.v7.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
