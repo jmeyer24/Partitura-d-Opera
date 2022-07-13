@@ -35,11 +35,6 @@ body::-webkit-scrollbar {
   background-color: black;
 }
 
-title {
-  fill: blue;
-  stroke: red;
-}
-
 .flag {
   position: absolute;
   border: 1px solid black;

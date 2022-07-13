@@ -308,39 +308,34 @@ function drawComposer(c) {
   // Draw the country flags in the order given by countryNoteOrder
   // ==============================================================
 
-  for (let i = 0; i < allCountries.length; i++) {
-    // create one empty flag element
-    if (!countries.includes(allCountries[i])) {
-      let j = 9 - countryNoteOrder[i];
-      $(document.createElement("img"))
-        .addClass("no-flag")
-        .css({
-          "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
-          "top": stave.getY() + FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
-          "height": FLAGHEIGHT,
-          "width": FLAGWIDTH
-        })
-        .appendTo("body");
-    }
-  for (let i = 0; i < allCountries.length; i++) {
-    // create one flag element
-    if (countries.includes(allCountries[i])) {
-      let j = 9 - countryNoteOrder[i];
-      $(document.createElement("img"))
-        .addClass("flag")
-        .attr({
-          "src": "./img/flags/" + allCountries[i] + "-flag.jpg",
-        })
-        .css({
-          "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
-          "top": stave.getY() + FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
-          "height": FLAGHEIGHT,
-          "width": FLAGWIDTH
-        })
-        .appendTo("body");
+  const drawFlag = (boolInclude, className) => {
+    let flag;
+    for (let i = 0; i < allCountries.length; i++) {
+      // create one empty flag element
+      if (boolInclude == countries.includes(allCountries[i])) {
+        let j = 9 - countryNoteOrder[i];
+        flag = $(document.createElement("img"));
+        flag
+          .addClass(className)
+          .css({
+            "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+            "top": stave.getY() + FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
+            "height": FLAGHEIGHT,
+            "width": FLAGWIDTH
+          })
+          .appendTo("body");
+        if (boolInclude) {
+          flag
+            .attr({
+              "src": "./img/flags/" + allCountries[i] + "-flag.jpg",
+            });
+        }
+      }
     }
   }
-  }
+  drawFlag(false, "no-flag");
+  drawFlag(true, "flag");
+
   // // TODO: make this work so the images are in relation to the stave in the DOM?
   //   $(document.createElementNS("http://www.w3.org/2000/svg", "image"))
   //     .addClass("flag")
@@ -620,7 +615,6 @@ function drawYear(
   // Add tooltips for each note
   // ========================================================================
 
-  // TODO repair this function...
   for (let s = 0; s < showsInYear.length; s++) {
     let show = showsInYear[s];
     // set text of tooltip for the current node
