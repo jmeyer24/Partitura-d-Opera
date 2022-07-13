@@ -283,9 +283,9 @@ function drawComposer(c) {
   // write birth and death year
   let birthDeath = el
     .clone()
-    .appendTo(el.parent())
     .html(birthYears[lastName] + " - " + deathYears[lastName])
-    .css("font-size", BIRTHDEATHFONTSIZE);
+    .css("font-size", BIRTHDEATHFONTSIZE)
+    .appendTo(el.parent());
   birthDeath
     .attr({
       "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
@@ -294,13 +294,48 @@ function drawComposer(c) {
 
   // draw composer image
   $(document.createElementNS('http://www.w3.org/2000/svg', 'image'))
-    .appendTo(el.parent())
     .addClass("composer")
     .attr({
-      'href' : "img/composers/" + lastName + ".png",
-      "x" : + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
-      "y" : + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE
-    });
+      'href': "img/composers/" + lastName + ".png",
+      "x": + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
+      "y": + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE
+    })
+    .appendTo(el.parent());
+
+  // ==============================================================
+  // Draw the country flags in descending order
+  // ==============================================================
+
+  for (let i = 0; i < allCountries.length; i++) {
+    if (countries.includes(allCountries[i])) {
+      // one flag image element
+      $(document.createElement("img"))
+        .addClass("flag")
+        .attr({
+          "src": "./img/flags/" + allCountries[i] + "-flag.jpg",
+        })
+        .css({
+          "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+          "top": stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2,
+          "height": FLAGHEIGHT,
+          "width": FLAGWIDTH
+        })
+        .appendTo("body");
+    // // TODO: make this work so the images are in relation to the stave in the DOM?
+    //   $(document.createElementNS("http://www.w3.org/2000/svg", "image"))
+    //     .addClass("flag")
+    //     .attr({
+    //       "href": "./img/flags/" + allCountries[i] + "-flag.jpg",
+    //       "x": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+    //       "y": stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2,
+    //     })
+    //     .css({
+    //       "height": FLAGHEIGHT,
+    //       "width": FLAGWIDTH
+    //     })
+    //     .appendTo(el.parent());
+    }
+  }
 
   // ==============================================================
   // Draw the connectors
@@ -338,26 +373,6 @@ function drawComposer(c) {
       .draw();
     conn_double = new StaveConnector(stave, stave2);
     conn_double.setType(StaveConnector.type.DOUBLE).setContext(context).draw();
-  }
-
-  // ==============================================================
-  // Draw the country flags in descending order
-  // ==============================================================
-
-  for (let i = 0; i < allCountries.length; i++) {
-    if (countries.includes(allCountries[i])) {
-      // one flag image element
-      $(document.createElement("img"))
-        .appendTo("body")
-        .addClass("flag")
-        .attr("src", "./img/flags/" + allCountries[i] + "-flag.jpg")
-        .css({
-          "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
-          "top": stave.getY() + FLAGTOPOFFSET + i * 5 - FLAGHEIGHT / 2,
-          "height": FLAGHEIGHT,
-          "width": FLAGWIDTH
-        })
-    }
   }
 
   // ==============================================================
@@ -556,11 +571,11 @@ function drawYear(
   // ========================================================================
 
   // TODO sort and connect the librettists with beams
-  var beams = Beam.generateBeams(notes, { stem_direction: 1 });
-  var beams2 = Beam.generateBeams(notes2, { stem_direction: -1 });
-  // var beams = Beam.generateBeams(notes, {
-  //   groups: [new Fraction(2, 4)],
-  // });
+  // var beams = Beam.generateBeams(notes, { stem_direction: 1 });
+  // var beams2 = Beam.generateBeams(notes2, { stem_direction: -1 });
+  var beams = Beam.generateBeams(notes, {
+    groups: [new Fraction(2, 4)],
+  });
 
   // ========================================================================
   // Add tooltips for each note
@@ -594,9 +609,9 @@ function drawYear(
   beams.forEach(function (beam) {
     beam.setContext(context).draw();
   });
-  beams2.forEach(function (beam) {
-    beam.setContext(context).draw();
-  });
+  // beams2.forEach(function (beam) {
+  //   beam.setContext(context).draw();
+  // });
 }
 
 export { drawPartiture };
