@@ -187,6 +187,7 @@ function drawPartiture() {
   for (let c = 0; c < DATANUMCOMPOSERS; c++) {
     drawComposer(c);
   }
+  drawLegend();
 }
 
 function drawComposer(c) {
@@ -640,6 +641,82 @@ function drawYear(
       )
       .appendTo(notes[s].attrs.el);
   }
+}
+
+function drawLegend(){
+  const stave = new Stave(
+    300, 1300, FIRSTBARWIDTH
+  );
+  stave
+    .addTimeSignature("3/4")
+    .addClef("treble")
+    .setContext(context)
+    .draw();
+  
+  
+  const stave2 = new Stave(
+    300, 1300 + STAVEDISTANCE, FIRSTBARWIDTH
+  );
+  stave2
+    .addTimeSignature("5/6")
+    .addClef("bass")
+    .setContext(context)
+  stave2.setContext(context).draw();
+
+  const conn_brace = new StaveConnector(stave, stave2);
+  conn_brace
+    .setType(StaveConnector.type.BRACE)
+    .setText("composer name", Modifier.Position.LEFT)
+    .setContext(context)
+    .draw();
+
+  // ==============================================================
+  // Draw the country flags in the order given by countryNoteOrder
+  // ==============================================================
+  const allCountries = ["Italien", "Deutschland","Oesterreich", "Russland", "Frankreich", "Polen", "Tschechien", "England", "Niederlande", "Malta"];
+  const drawFlag = (boolInclude, className) => {
+    let flag;
+    for (let i = 0; i < allCountries.length; i++) {
+      // create one empty flag element
+        let j;
+        if (DESCENDINGFLAGS) {
+          j = 9 - countryNoteOrder[i];
+        } else {
+          j = countryNoteOrder[i];
+        }
+        flag = $(document.createElement("img"));
+        flag
+          .addClass(className)
+          .css({
+            "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+            "top": stave.getY() + FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
+            "height": FLAGHEIGHT,
+            "width": FLAGWIDTH
+          })
+          .appendTo("body");
+          flag
+            .attr({
+              "src": "./img/flags/" + allCountries[i] + "-flag.jpg",
+            });
+    }
+  }
+  drawFlag(false, "no-flag");
+  drawFlag(true, "flag");
+  
+  function write(text, x, y) {
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.innerHTML = text;
+    txt.setAttribute("x", x);
+    txt.setAttribute("y", y);
+    context.svg.appendChild(txt);
+  }
+
+  write("Each partiture\nrepresents a composer", 100, 1300);
+  write("Each note represents a performance", 600, 1300);
+  write("Note heights show\nthe country where the\nperformance took place", 300, 1520);
+  write("Note length and\ndottedness indicate the\nlibrettist of the performance", 100, 1600);
+  // TODO add table with librettist-duration assignment
+
 }
 
 export { drawPartiture };
