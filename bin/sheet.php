@@ -15,7 +15,8 @@ function utf8ize($d) {
 }
 
 /* get the file as an array and set the keys to the respective values ("composer",...) */
-$data = array_map('str_getcsv', file('data' . DIRECTORY_SEPARATOR . 'opera_data.csv'));
+// $data = array_map('str_getcsv', file('data' . DIRECTORY_SEPARATOR . 'opera_data.csv'));
+$data = array_map('str_getcsv', file('..' . DIRECTORY_SEPARATOR. 'data' . DIRECTORY_SEPARATOR . 'opera_data.csv'));
 array_walk($data, function(&$a) use ($data) {
 	$a = array_combine($data[0], $a);
 });

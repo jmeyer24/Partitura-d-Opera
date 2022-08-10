@@ -15,6 +15,7 @@ import {
 
 const {
   Beam,
+  BarlineType,
   Dot,
   Formatter,
   Fraction,
@@ -175,6 +176,7 @@ renderer.resize(SHEETWIDTH, SHEETHEIGHT);
 // ========================================================================
 
 const context = renderer.getContext();
+// context.setFont("Arial", 50, "");
 
 // ========================================================================
 // Draw the partiture
@@ -263,7 +265,6 @@ function drawComposer(c) {
   // ==============================================================
   // Draw left-side brace and name
   // ==============================================================
-
   if (GRANDSTAFF) {
     stave2
       .addTimeSignature(years.length + "/" + timespan)
@@ -508,6 +509,31 @@ function drawYear(
 
   if (y == 0 || y == timespan - 1 || fullYearList[y] % 5 == 0) {
     stave.setMeasure(fullYearList[y]);
+  }
+
+  // ========================================================================
+  // Write the births and deaths of composer as bar measure
+  // ========================================================================
+
+  var lastName = getLastName(shows[0]["composer"]);
+  // nobody dies during their showtime
+  if (fullYearList[y] == birthYears[lastName]) {
+    // stave.setMeasure("&#10059;");
+    let sectionBarline = new StaveConnector(stave, stave2);
+    sectionBarline
+      .setType(StaveConnector.type.DOUBLE)
+      .setContext(context)
+      .draw()
+    stave.setSection("Birth", 0, 0, BIRTHDEATHFONTSIZE, true);
+  }
+  if (fullYearList[y] == deathYears[lastName]) {
+    // stave.setMeasure("&#10014;");
+    let sectionBarline = new StaveConnector(stave, stave2);
+    sectionBarline
+      .setType(StaveConnector.type.DOUBLE)
+      .setContext(context)
+      .draw()
+    stave.setSection("Death", 0, 0, BIRTHDEATHFONTSIZE, true);
   }
 
   // ==============================================================
