@@ -703,20 +703,52 @@ function drawLegend(){
   drawFlag(false, "no-flag");
   drawFlag(true, "flag");
   
-  function write(text, x, y) {
+  function writeLine(text, x, y) {
     const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     txt.innerHTML = text;
     txt.setAttribute("x", x);
     txt.setAttribute("y", y);
+    txt.setAttribute("font-family", "Times New Roman, serif");
+    txt.setAttribute("font-size", "12pt");
     context.svg.appendChild(txt);
   }
 
-  write("Each partiture\nrepresents a composer", 100, 1300);
-  write("Each note represents a performance", 600, 1300);
-  write("Note heights show\nthe country where the\nperformance took place", 300, 1520);
-  write("Note length and\ndottedness indicate the\nlibrettist of the performance", 100, 1600);
-  // TODO add table with librettist-duration assignment
+  function write(text, x, y){
+    for(var line of text){
+      writeLine(line, x, y);
+      y += 20;
+    }
+  }
 
+  write(["Each partiture", "represents a composer"], 100, 1300);
+  write(["Each note represents a performance"], 600, 1300);
+  write(["Note heights show", "the country where the", "performance took place"], 300, 1520);
+  write(["Note length and", "indicates the librettist", "of the performance"], 100, 1600);
+  // TODO describe time signature
+
+  var allLibrettists = getInformation(dataset, "librettist", true, true);
+
+  var x = 200;
+  for(var l of allLibrettists){
+    const lastName = getLastName(l);
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.innerHTML = l;
+    txt.setAttribute("x", x);
+    txt.setAttribute("y", 1800);
+    txt.setAttribute("font-family", "Times New Roman, serif");
+    txt.setAttribute("font-size", "16pt");
+    context.svg.appendChild(txt);
+
+    const img = document.createElement("img");
+    img.setAttribute("src", "img/librettists/" + lastName + ".png");
+    img.setAttribute("class", "composer");
+    img.setAttribute("style", "left: " + x + "px; top: 1700px;");
+    document.body.appendChild(img);
+
+    x += 250;
+
+    // TODO draw note
+  }
 }
 
 export { drawPartiture };
