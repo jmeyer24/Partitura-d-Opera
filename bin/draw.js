@@ -75,7 +75,7 @@ const INVERSECOLORS = false;
 // Constants
 // ========================================================================
 
-const SHEETWIDTH = 15000;
+const SHEETWIDTH = 10000;
 const STARTX = 180;
 const STARTY = 50;
 const STAVEWIDTH = SHEETWIDTH - 1.5 * STARTX;
@@ -112,7 +112,7 @@ let librettistDurationMap = [2, 4, 8, 16].reverse(); // [8, 16, 32, 64].reverse(
 // by latitude of country (when sorted by frequency in allCountries)
 let DESCENDINGFLAGS = false;
 let noteList = ["f/5", "e/5", "d/5", "c/5", "b/4", "a/4", "g/4", "f/4", "e/4", "d/4"];
-let countryNoteOrder = [8, 2, 7, 0, 5, 3, 6, 1, 4, 9]; // ['Italien', 'Deutschland', 'Oesterreich', 'Russland', 'Frankreich', 'Polen', 'Tschechien', 'England', 'Niederlande', 'Malta'] 
+let countryNoteOrder = [8, 4, 6, 0, 7, 2, 5, 1, 3, 9]; // not anymore!!! xxx ['Italien', 'Deutschland', 'Oesterreich', 'Russland', 'Frankreich', 'Polen', 'Tschechien', 'England', 'Niederlande', 'Malta'] 
 
 let countryNoteMap = countryNoteOrder.map((note) => noteList[note]);
 
@@ -168,7 +168,7 @@ const REST = new StaveNote({
 // Create an SVG renderer and attach it to the DIV element named "output".
 // ========================================================================
 
-const renderer = new Renderer($("#output")[0], Renderer.Backends.SVG);
+const renderer = new Renderer($("#partiture")[0], Renderer.Backends.SVG);
 renderer.resize(SHEETWIDTH, SHEETHEIGHT);
 
 // ========================================================================
@@ -318,8 +318,9 @@ function drawComposer(c) {
   // Draw the country flags in the order given by countryNoteOrder
   // ==============================================================
 
-  const drawFlag = (boolInclude, className) => {
+  const drawFlag = (boolInclude, className, parentId) => {
     let flag;
+    let border;
     for (let i = 0; i < allCountries.length; i++) {
       // create one empty flag element
       if (boolInclude == countries.includes(allCountries[i])) {
@@ -330,26 +331,55 @@ function drawComposer(c) {
           j = countryNoteOrder[i];
         }
         flag = $(document.createElement("img"));
+        // flag = $(document.createElementNS("http://www.w3.org/2000/svg", "image"));
+        // border = $(document.createElementNS("http://www.w3.org/2000/svg", "rect"));
+        // border
+        //   .addClass(className)
+        //   .attr({
+        //     "x": FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+        //     "y": FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
+        //     "height": FLAGHEIGHT - 1,
+        //     "width": FLAGWIDTH - 1,
+        //     // "stroke": "silver",
+        //     // "stroke-width": "1px",
+        //     // "fill": "none"
+        //   })
+        //   .appendTo("#" + parentId + "-flags");
         flag
           .addClass(className)
+          // .attr({
+          //   "x": FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
+          //   "y": FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
+          //   "height": FLAGHEIGHT,
+          //   "width": FLAGWIDTH,
+          //   // "style": "border: 1px solid black",
+          // })
           .css({
             "left": stave.getX() + FLAGLEFTOFFSET + i * FLAGBETWEEN - FLAGWIDTH / 2,
             "top": stave.getY() + FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2,
             "height": FLAGHEIGHT,
             "width": FLAGWIDTH
           })
-          .appendTo("body");
+          .appendTo("#" + parentId + "-flags");
+        // .appendTo(el);
         if (boolInclude) {
           flag
             .attr({
               "src": "./img/flags/" + allCountries[i] + "-flag.jpg",
+              // "href": "./img/flags/" + allCountries[i] + "-flag.jpg",
             });
         }
       }
     }
   }
-  drawFlag(false, "no-flag");
-  drawFlag(true, "flag");
+  $(document.createElement("div"))
+    // $(document.createElementNS("http://www.w3.org/2000/svg", "g"))
+    .attr('id', lastName + "-flags")
+    // .appendTo(el.parent());
+    // .appendTo($(stave));
+    .appendTo("#partiture");
+  drawFlag(false, "no-flag", lastName);
+  drawFlag(true, "flag", lastName);
 
   // // TODO: make this work so the images are in relation to the stave in the DOM?
   //   $(document.createElementNS("http://www.w3.org/2000/svg", "image"))
@@ -668,4 +698,200 @@ function drawYear(
   }
 }
 
-export { drawPartiture };
+// ========================================================================
+// Draw the legend of the staves
+// ========================================================================
+
+const legendRenderer = new Renderer($("#legend-staves")[0], Renderer.Backends.SVG);
+const LEGENDWIDTH = 800;
+const LEGENDHEIGHT = 450;
+const topoff = 100;
+const legendwidth = 100;
+legendRenderer.resize(LEGENDWIDTH, LEGENDHEIGHT);
+const ctx = legendRenderer.getContext();
+
+const LEGENDWIDTHFLAGS = 450;
+const flagsRenderer = new Renderer($("#legend-flags")[0], Renderer.Backends.SVG);
+flagsRenderer.resize(LEGENDWIDTHFLAGS, LEGENDHEIGHT);
+const flagsctx = flagsRenderer.getContext();
+
+const mapRenderer = new Renderer($("#legend-map")[0], Renderer.Backends.SVG);
+mapRenderer.resize(650, 450);
+const mapctx = mapRenderer.getContext();
+
+function drawLegend() {
+  ctx.clear();
+
+  // draw the stave
+  let stave = new Stave(
+    (LEGENDWIDTH - FIRSTBARWIDTH) / 2, topoff, legendwidth
+  );
+  stave
+    .addTimeSignature("3/4")
+    .addClef("treble")
+    .setContext(ctx)
+    .draw();
+  let stave2 = new Stave(
+    (LEGENDWIDTH - FIRSTBARWIDTH) / 2, topoff + STAVEDISTANCE + FLAGTOPOFFSET, legendwidth
+  );
+  stave2
+    .addTimeSignature("5/6")
+    .addClef("bass")
+    .setContext(ctx)
+  stave2.setContext(ctx).draw();
+  let conn_brace = new StaveConnector(stave, stave2);
+  conn_brace
+    .setType(StaveConnector.type.BRACE)
+    .setText("composer name", Modifier.Position.LEFT)
+    .setContext(ctx)
+    .draw();
+
+  // draw birthdeath
+  let el = $(document)
+    .find("text:contains('composer name')")
+  let birthDeath = el
+    .clone()
+    .html("year of birth - year of death")
+    .css("font-size", BIRTHDEATHFONTSIZE)
+    .appendTo(el.parent());
+  birthDeath
+    .attr({
+      "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
+      "y": + el.attr("y") + BIRTHDEATHFONTSIZE
+    });
+
+  // draw composer image
+  $(document.createElementNS('http://www.w3.org/2000/svg', 'image'))
+    .addClass("composer")
+    .attr({
+      'href': "img/composers/Mozart.png",
+      "x": + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
+      "y": + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE
+    })
+    .appendTo(el.parent());
+
+  // write the legend texts
+  function write(text, x, y) {
+    let txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.innerHTML = text;
+    txt.setAttribute("class", "legend-description");
+    txt.setAttribute("x", x);
+    txt.setAttribute("y", y);
+    ctx.svg.appendChild(txt);
+  }
+
+  function drawLine(x, y, boolBelow = true) {
+    let length = 17;
+    var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    newLine.setAttribute('class', 'line');
+    if (boolBelow) {
+      newLine.setAttribute('x1', x - length);
+      newLine.setAttribute('y1', y - length);
+      newLine.setAttribute('x2', x);
+      newLine.setAttribute('y2', y - 10);
+    } else {
+      newLine.setAttribute('x1', x - length);
+      newLine.setAttribute('y1', y + length);
+      newLine.setAttribute('x2', x);
+      newLine.setAttribute('y2', y);
+    }
+    newLine.setAttribute("stroke", "black")
+    ctx.svg.append(newLine);
+  }
+
+  let staves = $("#legend svg").children();
+  let box1 = staves[0].getBBox();
+  let box2 = staves[1].getBBox();
+
+  let leftoff = 80;
+  let offset = 20;
+  write("# different operas this composer did create", box1.x + leftoff, box1.y - offset);
+  drawLine(box1.x + leftoff, box1.y - offset, false)
+  write("# librettists this composer worked with", box1.x + leftoff, box1.y + box1.height + offset);
+  drawLine(box1.x + leftoff, box1.y + box1.height + offset - 5, true)
+  write("# years in which at least one show was performed", box2.x + leftoff, box2.y - offset);
+  drawLine(box2.x + leftoff, box2.y - offset, false)
+  write("during a timespan of # years", box2.x + leftoff, box2.y + box2.height + offset);
+  drawLine(box2.x + leftoff, box2.y + box2.height + offset, true)
+
+  // ========================================================================
+  // Draw the legend of the flags
+  // ========================================================================
+
+  flagsctx.clear();
+
+  function drawLineFlags(x, y) {
+    let length = 1000;
+    var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    newLine.setAttribute('class', 'line');
+    newLine.setAttribute('x1', x);
+    newLine.setAttribute('y1', y);
+    newLine.setAttribute('x2', x + length);
+    newLine.setAttribute('y2', y);
+    newLine.setAttribute("stroke", "black")
+    flagsctx.svg.append(newLine);
+  }
+
+  const allCountries = ["Italien", "Deutschland", "Oesterreich", "Russland", "Frankreich", "Polen", "Tschechien", "England", "Niederlande", "Malta"];
+  let bb = flagsctx.svg.getBoundingClientRect();
+  console.log(flagsctx.svg.getBoundingClientRect());
+  const drawFlag = (className) => {
+    let flag;
+    for (let i = 0; i < allCountries.length; i++) {
+      // create one empty flag element
+      let j;
+      if (DESCENDINGFLAGS) {
+        j = 9 - countryNoteOrder[i];
+      } else {
+        j = countryNoteOrder[i];
+      }
+      flag = $(document.createElement("img"));
+      let pos = $("#legend-flags div").position();
+      let flagX = FLAGLEFTOFFSET + i * (FLAGBETWEEN + 10)- FLAGWIDTH / 2;
+      let flagY = FLAGTOPOFFSET + j * LINEBETWEEN - FLAGHEIGHT / 2 + LEGENDHEIGHT / 2 - FLAGTOPOFFSET * 1.5;
+      flag
+        .addClass(className)
+        .css({
+          "left": pos.left + flagX,
+          "top": pos.top + flagY,
+          "height": FLAGHEIGHT,
+          "width": FLAGWIDTH,
+          "position": "absolute"
+        })
+        .appendTo($("#flags"))
+        .attr({
+          "src": "./img/flags/" + allCountries[i] + "-flag.jpg",
+        });
+      drawLineFlags(flagX + 10, flagY + FLAGHEIGHT / 2);
+    }
+  }
+  drawFlag("flag");
+
+  // ========================================================================
+  // Draw the legend of the map
+  // ========================================================================
+
+  function drawLineMap(x, y, x2 = 1000, y2 = y) {
+    var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    newLine.setAttribute('class', 'line');
+    newLine.setAttribute('x1', x);
+    newLine.setAttribute('y1', y);
+    newLine.setAttribute('x2', x2);
+    newLine.setAttribute('y2', y2);
+    newLine.setAttribute("stroke", "black")
+    mapctx.svg.append(newLine);
+  }
+  let latitudeMap = [15, 100, 157, 161, 177, 210, 248, 256, 287, 435];
+  let latitudeMapBeginning = [];
+  for(let i = 0; i < 10; i++){
+    latitudeMapBeginning[i] = 205.5 + i * 5;
+  }
+  let lengthMap = [557, 88, 353, 196, 253, 309, 297, 158, 250, 298];
+  let lineBeg = 75;
+  for (let l in latitudeMap){
+    drawLineMap(0, latitudeMapBeginning[l], lineBeg, latitudeMap[l]);
+    drawLineMap(lineBeg, latitudeMap[l], lengthMap[l]);
+  }
+}
+
+export { drawPartiture, drawLegend };

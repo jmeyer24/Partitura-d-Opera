@@ -3,6 +3,9 @@ body {
   width: 100%;
   height: 100%;
   margin: 0;
+  font-family: "Monotype Corsiva", "Bradley Hand ITC", "Tempus Sans ITC", "French Script MT", "Comic Sans MS";
+  font-size: 100px;
+  /* font-weight: bold; */
 }
 
 /* hide the scrollbar */
@@ -25,6 +28,95 @@ body::-webkit-scrollbar {
   /* background-size: 100% 100%; */
 }
 
+p, li {
+  /* justify-content: center;
+  text-align: center;
+  z-index: 1; */
+  /* font-size: 1.5em; */
+}
+
+li {
+  list-style: none;
+}
+
+span {
+  color: brown;
+}
+
+#legend {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  text-align: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  /* margin: 70px; */
+  margin-left: 50px;
+  margin-bottom: 100px;
+  /* border: 3px solid silver; */
+  background-color: transparent;
+}
+
+/* #legend > div {
+  border: 3px dashed brown;
+} */
+
+#legend-text {
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* text-align: center; */
+  justify-content: center;
+  font-size: x-large; /* 1.5em; */
+  padding: 50px;
+}
+
+header {
+  flex: 0 0 100%;
+}
+
+/* #legend-map{
+  position: relative;
+}
+#legend-map::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: url(img/map/europe.jpg);
+  background-size: cover;
+  filter: sepia(100%);
+}
+#legend-map-inside {
+  position: relative;
+} */
+#legend-countries{
+  display: grid;
+  /* flex-direction: row;
+  flex-flow: column nowrap; */
+}
+
+.legend-description {
+  font-size: x-large;
+}
+
+/* #legend-staves {
+
+}*/
+
+#legend-flags {
+  /* align-items: center;
+  text-align: center; */
+}
+
+#legend-map {
+  background-image: url(img/map/europe.jpg);
+  background-size: cover;
+}
+
 .output-inverse {
   display: flex;
   flex-direction: column;
@@ -35,8 +127,15 @@ body::-webkit-scrollbar {
   background-color: black;
 }
 
+.line {
+  z-index: 2;
+}
+
 .flag {
   position: absolute;
+  /* fill: none;
+  stroke: black;
+  stroke-width: 1px; */
   border: 1px solid black;
   /* -webkit-mask-image: linear-gradient(to right,
       transparent,
@@ -59,4 +158,8 @@ body::-webkit-scrollbar {
   position: absolute;
   width: 50px;
   height: 50px;
+}
+
+#noteforcond {
+  border-bottom: 1px solid black;
 }
