@@ -50,11 +50,24 @@ $json_data = str_replace("'", " ", $json_data);
 		<div id="output" class="output">
 			<div id="partiture"></div>
 			<div id="legend">
+				<div class="timeline"></div>
+				<div class="title">partitura d'opera</div>
+				<div class="timeline"></div>
 				<div id="legend-text">
 					<h2 id="noteforcond">Note for the conductor</h2>
 					<p>
-						This partiture depicts <span>10 composers</span> and their opera shows in the timespan <span>between 1775 and 1833</span><br>
+						This partiture depicts <span>10 composers</span> and their opera shows <span>between 1775 and 1833</span><br>
 						Each note represents one show of an opera of the respective composer in the respective year
+					</p>
+					<p>
+						The representations are as follow:					
+						<table>
+							<tr><td>grand staff</td><td></td><td>composer</td></tr>
+							<tr><td>measure</td><td></td><td>year</td></tr>
+							<tr><td>musical note</td><td></td><td>an opera performance</td></tr>
+							<tr><td></td><td>note height</td><td>country of performance</td></tr>
+							<tr><td></td><td>note length</td><td>librettist of performance</td></tr>
+						</table>
 					</p>
 					<p>
 						<span>Note height</span> indicates the country the show took place in<br>
@@ -72,13 +85,14 @@ $json_data = str_replace("'", " ", $json_data);
 					</p>
 				</div>
 				<div id="legend-staves">
-					<!-- <h2>Clef information</h2> -->
 				</div>
 				<div id="legend-flags">
-					<!-- <h2>Countries sorted by latitude</h2> -->
 					<div id="flags"></div>
 				</div>
 				<div id="legend-map"></div>
+				<div class="timeline"></div>
+				<div class="title">partitura d'opera</div>
+				<div class="timeline"></div>
 			</div>
 		</div>
 		<script type="module" src="functions.js"></script>

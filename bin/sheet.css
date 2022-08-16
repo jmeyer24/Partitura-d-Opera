@@ -4,12 +4,10 @@ body {
   height: 100%;
   margin: 0;
   font-family: "Monotype Corsiva", "Bradley Hand ITC", "Tempus Sans ITC", "French Script MT", "Comic Sans MS";
-  font-size: 100px;
-  /* font-weight: bold; */
+  font-size: xx-large;
 }
 
 /* hide the scrollbar */
-/* TODO: uncomment */
 body::-webkit-scrollbar {
   display: none;
 }
@@ -23,98 +21,59 @@ body::-webkit-scrollbar {
 
   background-image: url(img/backgrounds/tan-seamless-paper-textures-2.jpg);
   background-attachment: scroll;
-  /* background-attachment: fixed; */
-  /* background-size: contain; */
-  /* background-size: 100% 100%; */
-}
-
-p, li {
-  /* justify-content: center;
-  text-align: center;
-  z-index: 1; */
-  /* font-size: 1.5em; */
-}
-
-li {
-  list-style: none;
-}
-
-span {
-  color: brown;
 }
 
 #legend {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   text-align: center;
   justify-content: center;
   position: absolute;
-  bottom: 0;
-  left: 0;
-  /* margin: 70px; */
-  margin-left: 50px;
-  margin-bottom: 100px;
-  /* border: 3px solid silver; */
-  background-color: transparent;
-}
-
-/* #legend > div {
-  border: 3px dashed brown;
-} */
-
-#legend-text {
-  width: 700px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* text-align: center; */
-  justify-content: center;
-  font-size: x-large; /* 1.5em; */
+  margin: auto;
   padding: 50px;
 }
 
-header {
-  flex: 0 0 100%;
+.timeline {
+  height: 10px;
+  border-bottom: 5px solid brown;
+  border-top: 5px solid brown;
+  margin: 20px;
 }
-
-/* #legend-map{
-  position: relative;
-}
-#legend-map::before {
-  content: "";
+/* .timeline::before {
+  content: '';
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-image: url(img/map/europe.jpg);
-  background-size: cover;
-  filter: sepia(100%);
+  top: 50%;
+  border-left: 5px solid brown;
+  border-top: 5px solid brown;
+  width: 25px;
+  height: 25px;
+  transform: translate(-125%, -50%) rotate(135deg);
 }
-#legend-map-inside {
-  position: relative;
+.timeline::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  border-left: 5px solid brown;
+  border-top: 5px solid brown;
+  width: 25px;
+  height: 25px;
+  transform: translate(-50%, -50%) rotate(135deg);
 } */
-#legend-countries{
-  display: grid;
-  /* flex-direction: row;
-  flex-flow: column nowrap; */
-}
 
-.legend-description {
-  font-size: x-large;
-}
-
-/* #legend-staves {
-
-}*/
-
-#legend-flags {
-  /* align-items: center;
-  text-align: center; */
+#legend-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #legend-map {
-  background-image: url(img/map/europe.jpg);
+  background-image: url(img/map/europe-brown-2.jpg);
   background-size: cover;
+  margin-right: 50px;
+  padding: 0;
+  border-radius: 50% 5% 50% 50%;
 }
 
 .output-inverse {
@@ -133,20 +92,7 @@ header {
 
 .flag {
   position: absolute;
-  /* fill: none;
-  stroke: black;
-  stroke-width: 1px; */
   border: 1px solid black;
-  /* -webkit-mask-image: linear-gradient(to right,
-      transparent,
-      black 40%,
-      black 60%,
-      transparent);
-  mask-image: linear-gradient(to right,
-      transparent,
-      black 40%,
-      black 60%,
-      transparent); */
 }
 
 .no-flag {
@@ -161,5 +107,18 @@ header {
 }
 
 #noteforcond {
-  border-bottom: 1px solid black;
+  border-bottom: 5px solid brown;
+  color: brown;
+}
+
+span {
+  color: brown;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+}
+
+.title {
+  color: brown;
+  margin: 50px;
+  font-size: 70px;
 }
