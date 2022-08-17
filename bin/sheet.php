@@ -48,10 +48,11 @@ $json_data = str_replace("'", " ", $json_data);
 // <?php echo "console.log('this is json_data (.php): ', '$json_data');";?>
 </script>
 		<div id="output" class="output">
-			<div id="partiture"></div>
+			<canvas id="partiture"></canvas>
+			<!-- <div id="partiture"></div> -->
 			<div id="legend">
 				<div class="timeline"></div>
-				<div class="title">partitura d'opera</div>
+				<div class="title"><a id="link">partitura d'opera</a></div>
 				<div class="timeline"></div>
 				<div id="legend-text">
 					<h2 id="noteforcond">Note for the conductor</h2>
