@@ -48,8 +48,7 @@ $json_data = str_replace("'", " ", $json_data);
 // <?php echo "console.log('this is json_data (.php): ', '$json_data');";?>
 </script>
 		<div id="output" class="output">
-			<canvas id="partiture"></canvas>
-			<!-- <div id="partiture"></div> -->
+			<div id="partiture"></div>
 			<div id="legend">
 				<div class="timeline"></div>
 				<div class="title"><a id="link">partitura d'opera</a></div>
@@ -58,7 +57,7 @@ $json_data = str_replace("'", " ", $json_data);
 					<h2 id="noteforcond">Note for the conductor</h2>
 					<p>
 						This partiture depicts <span>10 composers</span> and their opera shows <span>between 1775 and 1833</span> as a musical piece<br>
-						<span>A single note</span> represents <span>one show</span> of an opera of the respective composer in the respective year<br>
+						<span>A single note</span> represents <span>one show of an opera</span> of the respective composer in the respective year<br>
 					</p>
 					<p>
 						<span>Pitch and length</span> of such a note give <span>country and librettist</span> of the performance, respectively<br>
@@ -71,6 +70,11 @@ $json_data = str_replace("'", " ", $json_data);
 						countries with more shows are arranged to the left
 					</p>
 					<p>
+						Note annotations assign a single note to its opera title<br>
+						Corresponding number-title pairs are given in the bass stave<br>
+						E.g. for Anfossi <span>in measure 1778</span> we assign the opera <span>Olimpiade</span> to the note with annotation <span>18</span>
+					</p>
+					<p>
 						An overview of the information is as follows:						
 					</p>
 					<table>
@@ -80,6 +84,7 @@ $json_data = str_replace("'", " ", $json_data);
 						<tr><td>musical note</td><td>an opera performance</td></tr>
 						<tr><td>note length</td><td>librettist of performance</td></tr>
 						<tr><td>pitch/flag</td><td>country of performance</td></tr>
+						<tr><td>note annotation</td><td>opera</td></tr>
 					</table>
 				</div>
 				<div id="legend-staves"></div>

@@ -12,8 +12,10 @@ import {
 // ========================================================================
 
 const {
+  Annotation,
   Beam,
   Dot,
+  Font,
   Formatter,
   Fraction,
   Modifier,
@@ -77,7 +79,7 @@ const SHEETWIDTH = 7000; // TODO: set to 10000
 const STARTX = 180;
 const STARTY = 50; // TODO: 250
 
-const SHEETHEIGHT = parseInt((5 / 7) * SHEETWIDTH); // is then 5000 with 7000 width
+const SHEETHEIGHT = parseInt((SHEETWIDTH / 7) * 5); // is then 5000 with 7000 width
 // const SHEETHEIGHT = 2 * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + STARTY)
 
 const STAVEWIDTH = SHEETWIDTH - 1.5 * STARTX;
@@ -94,6 +96,7 @@ const INTRASTAVEDISTANCE = INTERSTAVEDISTANCE / 2 - 25;
 const IMAGESIZE = 50;
 const COMPOSERFONTSIZE = 18; // is x-large
 const BIRTHDEATHFONTSIZE = 15;
+const OPERAFONTSIZE = 10;
 const YEARFONTSIZE = 12;
 
 // ========================================================================
@@ -152,6 +155,7 @@ const deathYears = {
 var stave = null;
 var stave2 = null;
 
+const MARKCOLOR = "rgba(0,0,0,0)";
 const RESTCOLOR = "silver";
 const REST = new StaveNote({
   keys: ["d/5"],
@@ -164,8 +168,7 @@ const REST = new StaveNote({
 // and configure the rendering context.
 // ========================================================================
 
-// const renderer = new Renderer($("#partiture")[0], Renderer.Backends.SVG)
-const renderer = new Renderer($("#partiture")[0], Renderer.Backends.CANVAS)
+const renderer = new Renderer($("#partiture")[0], Renderer.Backends.SVG)
   .resize(SHEETWIDTH, SHEETHEIGHT);
 const context = renderer.getContext();
 // context.setFont("Monotype Corsiva", 12);
@@ -279,35 +282,55 @@ function drawFirstStave(
   // Refine stave annotation with image and years
   // ==============================================================
 
-  // TODO: uncomment this
-  // // get text element with composer name
-  // let el = $(document)
-  //   .find("text:contains('" + lastName + "')")
-  // // .find("text:contains('" + lastName + "'):nth-child(" + pageNum + ")")
+  // get text element with composer name
+  let el = $(document)
+    .find("text:contains('" + lastName + "')")
+  // .find("text:contains('" + lastName + "'):nth-child(" + pageNum + ")")
 
-  // // write birth and death year
-  // let birthDeath = el
-  //   .clone()
-  //   .html(birthYears[lastName] + " - " + deathYears[lastName])
-  //   .css("font-size", BIRTHDEATHFONTSIZE)
-  //   .appendTo(el.parent());
-  // birthDeath
-  //   .attr({
-  //     // "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
-  //     // "y": + el.attr("y") + BIRTHDEATHFONTSIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
-  //     "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
-  //     "y": + el.attr("y") + BIRTHDEATHFONTSIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
-  //   });
+  // write birth and death year
+  let birthDeath = el
+    .clone()
+    .html(birthYears[lastName] + " - " + deathYears[lastName])
+    .css("font-size", BIRTHDEATHFONTSIZE)
+    .appendTo(el.parent());
+  birthDeath
+    .attr({
+      "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
+      "y": + el.attr("y") + BIRTHDEATHFONTSIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
+    });
 
-  // // draw composer image
-  // $(document.createElementNS('http://www.w3.org/2000/svg', 'image'))
-  //   .addClass("composer")
-  //   .attr({
-  //     'href': "img/composers/" + lastName + ".png",
-  //     "x": + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
-  //     "y": + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
-  //   })
-  //   .appendTo(el.parent());
+  // draw composer image
+  $(document.createElementNS('http://www.w3.org/2000/svg', 'image'))
+    .addClass("composer")
+    .attr({
+      'href': "img/composers/" + lastName + ".png",
+      "x": + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
+      "y": + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
+    })
+    .appendTo(el.parent());
+
+  // ==============================================================
+  // Write opera assignments
+  // ==============================================================
+
+  // let notes2 = [];
+  // const restAnnotation = (text, hJustification, vJustification) =>
+  //   new Annotation(text)
+  //     // .setFont(Font.SANS_SERIF, OPERAFONTSIZE)
+  //     .setFontSize(OPERAFONTSIZE)
+  //     .setStyle({fillStyle: "black", strokeStyle: "black"})
+  //     .setJustification(hJustification)
+  //     .setVerticalJustification(vJustification);
+  // let textRest = new StaveNote({
+  //   keys: ["d/5"],
+  //   duration: ["1r"],
+  //   align_center: true,
+  // })
+  //   .setStyle({ fillStyle: MARKCOLOR, strokeStyle: MARKCOLOR, opacity: 0.1 })
+  //   .addModifier(restAnnotation("# - opera title", 1, 2)); // set to 1, 2
+  // textRest.style.opacity = 0.1;
+  // notes2.push(textRest);
+  // Formatter.FormatAndDraw(context, stave2, notes2, false);
 
   // ==============================================================
   // Draw the country flags in the order given by countryNoteOrder
@@ -390,6 +413,7 @@ function drawYear(
   firstBarY
 ) {
   var allLibrettists = getInformation(dataset, "librettist", true, true);
+  let operas = getInformation(shows, "title", true);
 
   // ========================================================================
   // Datafiltering
@@ -466,6 +490,10 @@ function drawYear(
       .setType(StaveConnector.type.DOUBLE)
       .setContext(context)
       .draw()
+    // new StaveConnector(stave, stave)
+    //   .setType(StaveConnector.type.DOUBLE)
+    //   .setContext(context)
+    //   .draw()
     stave.setSection("Birth", 0, 0, BIRTHDEATHFONTSIZE, true);
   }
   if (fullYearList[y] == deathYears[lastName]) {
@@ -473,6 +501,10 @@ function drawYear(
       .setType(StaveConnector.type.DOUBLE)
       .setContext(context)
       .draw()
+    // new StaveConnector(stave, stave)
+    //   .setType(StaveConnector.type.DOUBLE)
+    //   .setContext(context)
+    //   .draw()
     stave.setSection("Death of composer", 0, 0, BIRTHDEATHFONTSIZE, true);
   }
 
@@ -481,6 +513,7 @@ function drawYear(
   // ==============================================================
 
   let conn = new StaveConnector(stave, stave2);
+  // let conn = new StaveConnector(stave, stave);
   conn
     .setType(StaveConnector.type.SINGLE_LEFT)
     .setContext(context)
@@ -529,11 +562,14 @@ function drawYear(
   );
 
   // number of notes per composer is all their operas
+  // const annotation = (text) => new Annotation(text).setFont(Font.SERIF, FONT_SIZE).setVerticalJustification(Annotation.VerticalJustify.BOTTOM);
+  const annotation = (text) => new Annotation(text).setVerticalJustification(Annotation.VerticalJustify.BOTTOM);
   for (let s = 0; s < showsInYear.length; s++) {
+    let ind = operas.findIndex((el) => showsInYear[s]["title"].normalize() === el.normalize()) + 1;
     var note = new StaveNote({
       keys: [keys[s]],
       duration: [durations[s]],
-    });
+    }).addModifier(annotation(ind), 0);
     if (dots[s]) {
       Dot.buildAndAttach([note], { all: true });
     }
@@ -545,12 +581,36 @@ function drawYear(
   // Fill the bar with a rests
   // ========================================================================
 
+  const restAnnotation = (text, hJustification, vJustification) =>
+    new Annotation(text)
+      // .setFont(Font.SANS_SERIF, FONT_SIZE)
+      .setFontSize(OPERAFONTSIZE)
+      .setStyle({fillStyle: "black", strokeStyle: "black"})
+      .setJustification(hJustification)
+      .setVerticalJustification(vJustification);
+    
   if (notes.length == 0) {
     notes.push(REST);
   }
   if (notes2.length == 0) {
-    notes2.push(REST);
+    let textRest = REST;
+    if (y < operas.length) {
+      textRest = new StaveNote({
+        keys: ["d/5"],
+        duration: ["1r"],
+        align_center: true,
+      })
+        .setStyle({ fillStyle: MARKCOLOR, strokeStyle: MARKCOLOR, opacity: 0.1 })
+        .addModifier(restAnnotation(y + 1 + " - " + operas[y], 1, 2)); // set to 1, 2
+      textRest.style.opacity = 0.1;
+      // let textRest = REST;
+        // textRest
+        // .setStyle({ strokeStyle: MARKCOLOR });
+    }
+    // notes2.push(REST);
+    notes2.push(textRest);
   }
+  stave2.setFontSize(OPERAFONTSIZE);
 
   // ========================================================================
   // Create beams
@@ -559,6 +619,7 @@ function drawYear(
   // TODO sort and connect the librettists with beams
   // var beams = Beam.generateBeams(notes, { stem_direction: 1 });
   // var beams2 = Beam.generateBeams(notes2, { stem_direction: -1 });
+  // TODO uncomment this
   var beams = Beam.generateBeams(notes, {
     groups: [new Fraction(2, 4)],
   });
@@ -575,11 +636,13 @@ function drawYear(
   // format stave with notes
   Formatter.FormatAndDraw(context, stave, notes, false);
   Formatter.FormatAndDraw(context, stave2, notes2, false);
+  // TODO uncomment
   beams.forEach(function (beam) {
     beam
       .setContext(context)
       .draw();
   });
+
   // beams2.forEach(function (beam) {
   //   beam.setContext(context).draw();
   // });
