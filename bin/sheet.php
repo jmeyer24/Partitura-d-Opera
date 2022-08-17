@@ -56,42 +56,45 @@ $json_data = str_replace("'", " ", $json_data);
 				<div id="legend-text">
 					<h2 id="noteforcond">Note for the conductor</h2>
 					<p>
-						This partiture depicts <span>10 composers</span> and their opera shows <span>between 1775 and 1833</span><br>
-						Each note represents one show of an opera of the respective composer in the respective year
+						This partiture depicts <span>10 composers</span> and their opera shows <span>between 1775 and 1833</span> as a musical piece<br>
+						<span>A single note</span> represents <span>one show</span> of an opera of the respective composer in the respective year<br>
 					</p>
 					<p>
-						The representations are as follow:					
-						<table>
-							<tr><td>grand staff</td><td></td><td>composer</td></tr>
-							<tr><td>measure</td><td></td><td>year</td></tr>
-							<tr><td>musical note</td><td></td><td>an opera performance</td></tr>
-							<tr><td></td><td>note height</td><td>country of performance</td></tr>
-							<tr><td></td><td>note length</td><td>librettist of performance</td></tr>
-						</table>
+						<span>Pitch and length</span> of such a note give <span>country and librettist</span> of the performance, respectively<br>
+						More frequent librettist have shorter note lengths<br>
 					</p>
 					<p>
-						<span>Note height</span> indicates the country the show took place in<br>
-						Flags show correspondence between note height and country:<br>
-						sorted vertically by means of country latitude<br>
-						sorted horizontally by number of overall shows in this country<br>
-						representing countries with more shows are arranged towards the left
+						Flags correspond to pitch and are sorted:<br>
+						- vertically by means of country latitude (see graph on the right)<br>
+						- horizontally by number of overall shows in this country<br>
+						countries with more shows are arranged to the left
 					</p>
 					<p>
-						<span>Note length</span> indicates the librettist of the opera<br>
-						This is only in respect to the composer<br>
-						One librettist can therefore have varying note lengths for different composers<br>
-						The table below shows the assignment between note length and librettist<br>
-						Overall, more frequent librettist do have shorter note lengths
+						An overview of the information is as follows:						
 					</p>
+					<table>
+						<tr><th>musical notation</th><th>data</th></tr>
+						<tr><td>grand staff</td><td>composer</td></tr>
+						<tr><td>measure</td><td>year</td></tr>
+						<tr><td>musical note</td><td>an opera performance</td></tr>
+						<tr><td>note length</td><td>librettist of performance</td></tr>
+						<tr><td>pitch/flag</td><td>country of performance</td></tr>
+					</table>
 				</div>
-				<div id="legend-staves">
+				<div id="legend-staves"></div>
+				<div id="legend-librettist">
+					<!-- <table id="table-librettist">
+						<tr><th>Note length</th><th>Librettist</th></tr>
+						<tr><td>Pot</td><td>Pot</td></tr>
+					</table> -->
 				</div>
 				<div id="legend-flags">
 					<div id="flags"></div>
+					<p>more shows first</p>
 				</div>
 				<div id="legend-map"></div>
 				<div class="timeline"></div>
-				<div class="title">partitura d'opera</div>
+				<div class="title">Jakob Meyer</div>
 				<div class="timeline"></div>
 			</div>
 		</div>

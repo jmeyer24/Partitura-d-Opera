@@ -350,16 +350,20 @@ function drawFirstStave(
   // ==============================================================
 
   let conn = new StaveConnector(stave, stave2);
-  conn
-    .setType(StaveConnector.type.SINGLE_RIGHT)
-    .setContext(context)
-    .draw();
+  // conn
+  //   .setType(StaveConnector.type.SINGLE_RIGHT)
+  //   .setContext(context)
+  //   .draw();
   conn
     .setType(StaveConnector.type.SINGLE_LEFT)
     .setContext(context)
     .draw();
   conn
     .setType(StaveConnector.type.DOUBLE)
+    .setContext(context)
+    .draw();
+  conn
+    .setType(StaveConnector.type.THIN_DOUBLE)
     .setContext(context)
     .draw();
 
@@ -453,18 +457,15 @@ function drawYear(
   // Write the births and deaths of composer as bar measure
   // ========================================================================
 
-  // nobody dies during their showtime
   if (fullYearList[y] == birthYears[lastName]) {
-    let sectionBarline = new StaveConnector(stave, stave2);
-    sectionBarline
+    new StaveConnector(stave, stave2)
       .setType(StaveConnector.type.DOUBLE)
       .setContext(context)
       .draw()
     stave.setSection("Birth", 0, 0, BIRTHDEATHFONTSIZE, true);
   }
   if (fullYearList[y] == deathYears[lastName]) {
-    let sectionBarline = new StaveConnector(stave, stave2);
-    sectionBarline
+    new StaveConnector(stave, stave2)
       .setType(StaveConnector.type.DOUBLE)
       .setContext(context)
       .draw()
@@ -475,10 +476,18 @@ function drawYear(
   // Draw the connectors
   // ==============================================================
 
-  new StaveConnector(stave, stave2)
-    .setType(StaveConnector.type.SINGLE_RIGHT)
+  let conn = new StaveConnector(stave, stave2);
+  conn
+    .setType(StaveConnector.type.SINGLE_LEFT)
     .setContext(context)
     .draw();
+
+  if (y == (years[years.length-1] - years[0])) {
+    conn
+      .setType(StaveConnector.type.BOLD_DOUBLE_RIGHT)
+      .setContext(context)
+      .draw();
+  }
 
   // ========================================================================
   // Create all notes of a year
@@ -601,7 +610,7 @@ const LEGENDWIDTHFLAGS = 450;
 // const LEGENDHEIGHTFLAGS = LEGENDHEIGHTSTAVES;
 const LEGENDWIDTHMAP = 650;
 const LEGENDHEIGHTMAP = 450;
-const LEGENDWIDTHTIME = 650;
+const LEGENDWIDTHTIME = 500;
 
 // ========================================================================
 // Setup each renderer for legend parts
@@ -611,6 +620,10 @@ const legendRenderer = new Renderer($("#legend-staves")[0], Renderer.Backends.SV
 legendRenderer.resize(LEGENDWIDTHSTAVES, LEGENDHEIGHT);
 const ctx = legendRenderer.getContext();
 
+// const librettistRenderer = new Renderer($("#legend-librettist")[0], Renderer.Backends.SVG);
+// librettistRenderer.resize(LEGENDWIDTHSTAVES, LEGENDHEIGHT);
+// const librettistctx = librettistRenderer.getContext();
+
 const flagsRenderer = new Renderer($("#legend-flags")[0], Renderer.Backends.SVG);
 flagsRenderer.resize(LEGENDWIDTHFLAGS, LEGENDHEIGHT);
 const flagsctx = flagsRenderer.getContext();
@@ -619,7 +632,7 @@ const mapRenderer = new Renderer($("#legend-map")[0], Renderer.Backends.SVG);
 mapRenderer.resize(LEGENDWIDTHMAP, LEGENDHEIGHTMAP);
 const mapctx = mapRenderer.getContext();
 
-$(".timeline").each(function(index) {
+$(".timeline").each(function (index) {
   new Renderer($(this)[0], Renderer.Backends.SVG)
     .resize(LEGENDWIDTHTIME, LEGENDHEIGHT);
 })
@@ -723,6 +736,20 @@ function drawLegend() {
   drawLine(box2.x + leftoff, box2.y - offset, false)
   write("during a timespan of # years", box2.x + leftoff, box2.y + box2.height + offset * 1.5);
   drawLine(box2.x + leftoff, box2.y + box2.height + offset * 1.25, true)
+
+  // ========================================================================
+  // Draw the legend of librettists
+  // ========================================================================
+
+  let tableHTML = "<tr><th>Base note value</th><th>Dotted</th><th>Librettist</th></tr>";
+  let allLibrettists = getInformation(dataset, "librettist", true, true);
+  for (let index in allLibrettists) {
+    let name = getLastName(allLibrettists[index], ",");
+    tableHTML += "<tr><td>" + librettistDurationMap[Math.floor(index/2)] + "</td><td>" + (index % 2 ? "Yes" : "No") + "</td><td>" + name + "</td></tr>"
+  }
+  $(document.createElement("table"))
+    .appendTo("#legend-librettist")
+    .append(tableHTML);
 
   // ========================================================================
   // Draw the legend of the flags
