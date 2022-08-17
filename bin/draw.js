@@ -164,7 +164,8 @@ const REST = new StaveNote({
 // and configure the rendering context.
 // ========================================================================
 
-const renderer = new Renderer($("#partiture")[0], Renderer.Backends.SVG)
+// const renderer = new Renderer($("#partiture")[0], Renderer.Backends.SVG)
+const renderer = new Renderer($("#partiture")[0], Renderer.Backends.CANVAS)
   .resize(SHEETWIDTH, SHEETHEIGHT);
 const context = renderer.getContext();
 // context.setFont("Monotype Corsiva", 12);
@@ -278,32 +279,35 @@ function drawFirstStave(
   // Refine stave annotation with image and years
   // ==============================================================
 
-  // get text element with composer name
-  let el = $(document)
-    .find("text:contains('" + lastName + "')")
-  // .find("text:contains('" + lastName + "'):nth-child(" + pageNum + ")")
+  // TODO: uncomment this
+  // // get text element with composer name
+  // let el = $(document)
+  //   .find("text:contains('" + lastName + "')")
+  // // .find("text:contains('" + lastName + "'):nth-child(" + pageNum + ")")
 
-  // write birth and death year
-  let birthDeath = el
-    .clone()
-    .html(birthYears[lastName] + " - " + deathYears[lastName])
-    .css("font-size", BIRTHDEATHFONTSIZE)
-    .appendTo(el.parent());
-  birthDeath
-    .attr({
-      "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
-      "y": + el.attr("y") + BIRTHDEATHFONTSIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
-    });
+  // // write birth and death year
+  // let birthDeath = el
+  //   .clone()
+  //   .html(birthYears[lastName] + " - " + deathYears[lastName])
+  //   .css("font-size", BIRTHDEATHFONTSIZE)
+  //   .appendTo(el.parent());
+  // birthDeath
+  //   .attr({
+  //     // "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
+  //     // "y": + el.attr("y") + BIRTHDEATHFONTSIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
+  //     "x": + el.attr("x") + (el[0].textLength.baseVal.value - birthDeath[0].textLength.baseVal.value) / 2,
+  //     "y": + el.attr("y") + BIRTHDEATHFONTSIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
+  //   });
 
-  // draw composer image
-  $(document.createElementNS('http://www.w3.org/2000/svg', 'image'))
-    .addClass("composer")
-    .attr({
-      'href': "img/composers/" + lastName + ".png",
-      "x": + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
-      "y": + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
-    })
-    .appendTo(el.parent());
+  // // draw composer image
+  // $(document.createElementNS('http://www.w3.org/2000/svg', 'image'))
+  //   .addClass("composer")
+  //   .attr({
+  //     'href': "img/composers/" + lastName + ".png",
+  //     "x": + el.attr("x") + (el[0].textLength.baseVal.value - IMAGESIZE) / 2,
+  //     "y": + el.attr("y") - parseInt(el.attr("font-size")) - IMAGESIZE + pageNum * (DATANUMCOMPOSERS * INTERSTAVEDISTANCE + INTERPAGEDISTANCE)
+  //   })
+  //   .appendTo(el.parent());
 
   // ==============================================================
   // Draw the country flags in the order given by countryNoteOrder
@@ -821,5 +825,14 @@ function drawLegend() {
     drawMapLine(lineBeg, latitudeMap[l], lengthMap[l]);
   }
 }
+
+// ========================================================================
+// Link to download
+// ========================================================================
+
+// let link = document.getElementById('link');
+// link.setAttribute('download', 'MintyPaper.png');
+// link.setAttribute('href', renderer.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+// link.click();
 
 export { drawPartiture, drawLegend };
