@@ -83,6 +83,7 @@ Image resources:
   - [ ] Komponist
   - [ ] Librettist
 - [ ] Zeitstrahl der Länderentwicklung mit Flaggen (mit Anzahl shows)
+- [ ] Stave (Canvas): Tempo Test, um die Notenwerte Komponisten zuzuordnen
 
 ### Aesthetic
 
@@ -96,6 +97,7 @@ Image resources:
   - [x] Bilder zuschneiden
   - [x] besser positionieren
   - [x] Geburts-/Sterbedatum
+    - [x] in Takten als Wörter
     - [ ] in Takten als Symbole
 - [x] Flaggen
   - [x] zugeordnet zu Notenlinie/Land

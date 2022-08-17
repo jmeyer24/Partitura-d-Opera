@@ -1,12 +1,20 @@
+:root{
+  --color: #9d590e;
+  /* --color: #ba814a; */
+  /* --color: #b65110; */
+  /* --color: #c65600; */
+}
+
 html,
 body {
   width: 100%;
   height: 100%;
   margin: 0;
+  font-family: "Monotype Corsiva", "Bradley Hand ITC", "Tempus Sans ITC", "French Script MT", "Comic Sans MS";
+  font-size: xx-large;
 }
 
 /* hide the scrollbar */
-/* TODO: uncomment */
 body::-webkit-scrollbar {
   display: none;
 }
@@ -18,11 +26,143 @@ body::-webkit-scrollbar {
   justify-content: center;
   position: absolute;
 
-  background-image: url(img/backgrounds/tan-seamless-paper-textures-2.jpg);
-  background-attachment: scroll;
-  /* background-attachment: fixed; */
-  /* background-size: contain; */
-  /* background-size: 100% 100%; */
+  /* background-image: url(img/backgrounds/tan-seamless-paper-textures-2.jpg); */
+  /* background-image: url(img/backgrounds/old-paper-background-texture-26.jpg); */
+  /* background-attachment: scroll; */
+  /* transform: rotate(90deg); */
+}
+#partiture::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+
+    background-image: url(img/backgrounds/5.jpg);
+    background-repeat: round;
+
+    filter: opacity(0.75);
+    transform: scaleY(-1);
+}
+    /* background: url(img/backgrounds/old-paper-background-texture-26.jpg) 0 0 no-repeat; */
+    /* background-attachment: scroll; */
+    /* transform: rotate(180deg); */
+
+#legend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: absolute;
+  margin: auto;
+  padding: 50px;
+}
+
+.timeline {
+  height: 10px;
+  border-bottom: 5px solid var(--color);
+  border-top: 5px solid var(--color);
+  margin: 20px;
+}
+/* .timeline::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  border-left: 5px solid var(--color);
+  border-top: 5px solid var(--color);
+  width: 25px;
+  height: 25px;
+  transform: translate(-125%, -50%) rotate(135deg);
+}
+.timeline::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  border-left: 5px solid var(--color);
+  border-top: 5px solid var(--color);
+  width: 25px;
+  height: 25px;
+  transform: translate(-50%, -50%) rotate(135deg);
+} */
+
+#legend-text {
+  /* width: 1400px; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#legend-flags {
+  position: relative;
+}
+
+#legend-flags p {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: absolute;
+  margin: auto;
+  bottom: 29%;
+  left: 22%;
+  padding: 50px;
+}
+#legend-flags p::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  border-left: 5px solid var(--color);
+  border-top: 5px solid var(--color);
+  width: 25px;
+  height: 25px;
+  transform: translate(100%, -50%) rotate(-45deg);
+}
+#legend-flags p::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  border-left: 5px solid var(--color);
+  border-top: 5px solid var(--color);
+  width: 25px;
+  height: 25px;
+  transform: translate(0%, -50%) rotate(-45deg);
+}
+
+#legend-librettist {
+  margin-left: 100px;
+  width: 700px;
+}
+
+#legend-librettist table {
+  margin: 75px;
+}
+
+tr, th, td {
+  border-right: 1px solid var(--color);
+  border-left: 1px solid var(--color);
+  padding: 10px;
+}
+
+th {
+  border-bottom: 1px solid var(--color);
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0;
+}
+
+#legend-map {
+  background-image: url(img/map/europe-brown-2.jpg);
+  background-size: cover;
+  margin-right: 50px;
+  padding: 0;
+  border-radius: 50% 5% 50% 50%;
 }
 
 .output-inverse {
@@ -35,19 +175,13 @@ body::-webkit-scrollbar {
   background-color: black;
 }
 
+.line {
+  z-index: 2;
+}
+
 .flag {
   position: absolute;
   border: 1px solid black;
-  /* -webkit-mask-image: linear-gradient(to right,
-      transparent,
-      black 40%,
-      black 60%,
-      transparent);
-  mask-image: linear-gradient(to right,
-      transparent,
-      black 40%,
-      black 60%,
-      transparent); */
 }
 
 .no-flag {
@@ -59,4 +193,22 @@ body::-webkit-scrollbar {
   position: absolute;
   width: 50px;
   height: 50px;
+}
+
+#noteforcond {
+  border-bottom: 5px solid var(--color);
+  color: var(--color);
+}
+
+span {
+  color: var(--color);
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+}
+
+.title {
+  color: var(--color);
+  margin: 0px;
+  /* margin: -30px; */
+  font-size: 70px;
 }

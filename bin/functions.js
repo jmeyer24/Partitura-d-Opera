@@ -51,12 +51,13 @@ Object.defineProperty(Array.prototype, "equals", { enumerable: false });
 // ==============================================================
 // Helper function to get the last name of the composer
 // ==============================================================
-function getLastName(composerName) {
+function getLastName(composerName, sliceAt = false) {
   return (composerName = composerName.slice(
     0,
-    composerName.indexOf(",") < composerName.indexOf(" ")
-      ? composerName.indexOf(",")
-      : composerName.indexOf(" ")
+    sliceAt ? composerName.indexOf(sliceAt) :
+      composerName.indexOf(",") < composerName.indexOf(" ")
+        ? composerName.indexOf(",")
+        : composerName.indexOf(" ")
   ));
 }
 
